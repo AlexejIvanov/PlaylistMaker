@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Отступы -->
+    <dimen name="padding_top_small">14dp</dimen>
+    <dimen name="padding_bottom_large">28dp</dimen>
+    <dimen name="padding_horizontal">16dp</dimen>
+    <dimen name="padding_end_small">12dp</dimen>
+
+    <!-- Отступы между элементами -->
+    <dimen name="margin_top_medium">24dp</dimen>
+    <dimen name="margin_top_large">42dp</dimen>
+    <dimen name="margin_top_extra_large">45dp</dimen>
+
+    <!-- Радиусы -->
+    <dimen name="corner_radius_button">16dp</dimen>
+
+    <!-- Размеры текста -->
+    <dimen name="text_size_title">22sp</dimen>
+    <dimen name="text_size_normal">16sp</dimen>
+</resources>
