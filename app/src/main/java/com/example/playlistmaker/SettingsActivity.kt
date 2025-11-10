@@ -2,11 +2,12 @@ package com.example.playlistmaker
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,11 +15,28 @@ class SettingsActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_settings)
 
-        val backArrowButton =findViewById<Button>(R.id.back_button)
+        val density = resources.displayMetrics.density
+        val sidePadding = (16 * density).toInt()
 
-        backArrowButton.setOnClickListener {
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById<android.view.View>(R.id.settings)) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.updatePadding(
+                sidePadding + systemBars.left,
+                systemBars.top,
+                sidePadding + systemBars.right,
+                systemBars.bottom
+            )
+            insets
+        }
+
+        val backArrowImageView = findViewById<ImageView>(R.id.back_button)
+
+        backArrowImageView.setOnClickListener {
             val backArrowButton = Intent(this, MainActivity::class.java)
             startActivity(backArrowButton)
         }
+
     }
 }
+
