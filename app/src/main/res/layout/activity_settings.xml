@@ -18,22 +18,18 @@
         <ImageView
             android:id="@+id/back_button"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="0.05"
+            android:layout_gravity="center_vertical"
             android:src="@drawable/arrow_back"
-            android:scaleType="center"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"
-            style="@style/colorIcon"/>
+            android:padding="16dp"
+            style="@style/backIcon"/>
 
         <com.google.android.material.appbar.MaterialToolbar
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             app:title="@string/settings"
-            android:textSize="@dimen/text_size_title"
-            android:fontFamily="@font/ys_display_medium"
             style="@style/nameActivity"/>
     </LinearLayout>
 
@@ -43,30 +39,35 @@
         android:gravity="center_vertical"
         android:text="@string/dark_theme"
         android:checked="true"
-        android:thumbTint="@color/switchOn"
-        android:trackTint="@color/backgroundSwitch"
+        android:textSize="@dimen/text_size_normal"
+        android:fontFamily="@font/ys_display_regular"
+        app:thumbTint="@color/switchOn"
+        app:trackTint="@color/backgroundSwitch"
         app:useMaterialThemeColors="false"/>
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/share_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableEnd="@drawable/share"
         android:text="@string/share_app"
-        style="@style/TextSettings"/>
+        style="@style/textSettings"/>
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/support_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableEnd="@drawable/support"
         android:text="@string/support"
-        style="@style/TextSettings"/>
+        style="@style/textSettings"/>
 
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/user_agreement_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableEnd="@drawable/arrow_forward"
         android:text="@string/user_agreement"
-        style="@style/TextSettings"/>
+        style="@style/textSettings"/>
 
     </LinearLayout>

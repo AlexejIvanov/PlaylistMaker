@@ -5,18 +5,31 @@
     <dimen name="padding_bottom_large">28dp</dimen>
     <dimen name="padding_horizontal">16dp</dimen>
     <dimen name="padding_end_small">12dp</dimen>
+    <dimen name="padding_start_small">12dp</dimen>
     <dimen name="padding_vertical">20dp</dimen>
 
 
     <!-- Отступы между элементами -->
+    <dimen name="margin_small_end">12dp</dimen>
+    <dimen name="margin_small">16dp</dimen>
     <dimen name="margin_top_medium">24dp</dimen>
     <dimen name="margin_top_large">42dp</dimen>
     <dimen name="margin_top_extra_large">45dp</dimen>
 
+    <!-- Отступы внутри элемента -->
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_medium">16dp</dimen>
+
     <!-- Радиусы -->
     <dimen name="corner_radius_button">16dp</dimen>
+    <dimen name="corner_radius_search_bar">8dp</dimen>
+
 
     <!-- Размеры текста -->
     <dimen name="text_size_title">22sp</dimen>
     <dimen name="text_size_normal">16sp</dimen>
+    <dimen name="text_size_small">12sp</dimen>
+
+    <!-- Размеры layout -->
+    <dimen name="layout_height">36dp</dimen>
 </resources>

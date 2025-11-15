@@ -1,6 +1,8 @@
 package com.example.playlistmaker
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -26,5 +28,13 @@ class MediaActivity : AppCompatActivity() {
             )
             insets
         }
-            }
+
+        val backArrowImageView = findViewById<ImageView>(R.id.back_button)
+
+        // Кнопка "Назад"
+        backArrowImageView.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
         }
+    }
+}
+
