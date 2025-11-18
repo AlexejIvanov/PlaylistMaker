@@ -87,22 +87,6 @@ class SearchActivity : AppCompatActivity() {
             imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
         }
 
-        // Кнопка "Назад"
-        backArrowImageView.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
-        }
-
-        // Настройки
-        sittingButton.setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java))
-
-        }
-
-        // Медиа
-        mediaButton.setOnClickListener {
-            startActivity(Intent(this, MediaActivity::class.java))
-        }
-
         // Очистка строки поиска
         clearButton.setOnClickListener {
             searchEditText.setText("")

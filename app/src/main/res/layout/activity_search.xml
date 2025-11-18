@@ -32,14 +32,17 @@
             style="@style/nameActivity"/>
     </LinearLayout>
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/search_field_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/search_bar_bg">
 
     <EditText
         android:id="@+id/search_edit_text"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="@dimen/layout_height"
         android:drawableStart="@drawable/search_icon"
         android:inputType="text"
@@ -55,9 +58,9 @@
             android:layout_marginEnd="@dimen/margin_small_end"
             android:background="@drawable/search_bar_bg"
             android:src="@drawable/clear_icon"
-            android:visibility="gone"
+            android:visibility="invisible"
             style="@style/clearButton"/>
-    </FrameLayout>
+    </LinearLayout>
 
 
     <View
@@ -65,48 +68,6 @@
         android:layout_height="0dp"
         android:layout_weight="1"/>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/yp_lightGray"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/search_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/search"
-                android:drawableTop="@drawable/search_icon"
-                style="@style/navigationButton"
-                android:drawableTint="@color/yp_blue"
-                android:textColor="@color/yp_blue"/>
-
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/media_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/media_library"
-                android:drawableTop="@drawable/media_icon"
-                style="@style/navigationButton"/>
-
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/settings_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/settings"
-                android:drawableTop="@drawable/settings_icon"
-                style="@style/navigationButton"/>
-
-        </LinearLayout>
 
 </LinearLayout>
