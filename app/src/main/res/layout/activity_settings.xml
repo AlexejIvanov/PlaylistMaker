@@ -1,151 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/setting"
+    android:id="@+id/settings"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white"
-    android:paddingTop="@dimen/padding_top_small"
-    android:paddingBottom="@dimen/padding_bottom_large"
-    android:paddingEnd="@dimen/padding_end_small"
-    android:paddingStart="@dimen/padding_horizontal">
+    style="@style/backgroundColorActivity">
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:orientation="horizontal">
 
-        <Button
+        <ImageView
             android:id="@+id/back_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.15"
-            app:icon="@drawable/arrow_back"
-            android:backgroundTint="@color/white"
-            app:iconGravity="textStart"
-            app:iconTint="@color/yp_black"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"/>
+            android:layout_weight="0.05"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/arrow_back"
+            android:padding="16dp"
+            style="@style/backIcon"/>
 
-        <TextView
+        <com.google.android.material.appbar.MaterialToolbar
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="@dimen/padding_horizontal"
-            android:fontFamily="@font/ys_display"
-            android:text="@string/settings"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_title" />
+            app:title="@string/settings"
+            style="@style/nameActivity"/>
     </LinearLayout>
 
-    <LinearLayout
+    <com.google.android.material.switchmaterial.SwitchMaterial
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_top_extra_large"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?attr/selectableItemBackground">
+        android:text="@string/dark_theme"
+        android:checked="true"
+        android:textSize="@dimen/text_size_normal"
+        android:fontFamily="@font/ys_display_regular"
+        app:thumbTint="@color/switchOn"
+        app:trackTint="@color/backgroundSwitch"
+        app:useMaterialThemeColors="false"/>
 
-        <TextView
-            android:id="@+id/dark_theme_label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/dark_theme"
-            android:textSize="@dimen/text_size_normal"
-            android:textColor="@color/black"
-            android:fontFamily="@font/ys_display_regular" />
-
-        <Switch
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false" />
-    </LinearLayout>
-
-    <LinearLayout
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/share_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="@dimen/margin_top_large"
-        android:gravity="center_vertical"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?attr/selectableItemBackground">
+        android:drawableEnd="@drawable/share"
+        android:text="@string/share_app"
+        style="@style/textSettings"/>
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="start"
-            android:layout_weight="1"
-            android:text="@string/share_app"
-            android:textSize="@dimen/text_size_normal"
-            android:textColor="@color/black"
-            android:fontFamily="@font/ys_display_regular" />
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/share" />
-    </LinearLayout>
-
-    <LinearLayout
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/support_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="@dimen/margin_top_large"
-        android:gravity="center_vertical"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?attr/selectableItemBackground">
+        android:drawableEnd="@drawable/support"
+        android:text="@string/support"
+        style="@style/textSettings"/>
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="start"
-            android:layout_weight="1"
-            android:text="@string/support"
-            android:textSize="@dimen/text_size_normal"
-            android:textColor="@color/black"
-            android:fontFamily="@font/ys_display_regular" />
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/support" />
-    </LinearLayout>
-
-    <LinearLayout
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/user_agreement_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="@dimen/margin_top_large"
-        android:gravity="center_vertical"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?attr/selectableItemBackground">
+        android:drawableEnd="@drawable/arrow_forward"
+        android:text="@string/user_agreement"
+        style="@style/textSettings"/>
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="start"
-            android:layout_weight="1"
-            android:text="@string/user_agreement"
-            android:textSize="@dimen/text_size_normal"
-            android:textColor="@color/black"
-            android:fontFamily="@font/ys_display_regular" />
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/arrow_forward" />
     </LinearLayout>
-</LinearLayout>
