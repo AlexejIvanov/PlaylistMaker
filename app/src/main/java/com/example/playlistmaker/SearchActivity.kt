@@ -15,10 +15,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
 
 class SearchActivity : AppCompatActivity() {
     private var saveTextInput: String = TEXT_DEF
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var  trackAdepter: TrackAdepter
+    private lateinit var trackList: List<Track>
+
 
     companion object {
         const val SAVE_TEXT = "SAVE_TEXT"
@@ -29,12 +34,6 @@ class SearchActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         outState.putString(SAVE_TEXT, saveTextInput)
     }
-
-//    override fun onRestoreInstanceState(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-//        super.onRestoreInstanceState(savedInstanceState, persistentState)
-//        saveTextInput = savedInstanceState.getString(SAVE_TEXT, TEXT_DEF)
-//    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,8 +61,11 @@ class SearchActivity : AppCompatActivity() {
         val backArrowImageView = findViewById<ImageView>(R.id.back_button)
         val clearButton = findViewById<ImageView>(R.id.clear_button)
         val searchEditText = findViewById<EditText>(R.id.search_edit_text)
-        val sittingButton = findViewById<MaterialTextView>(R.id.settings_button)
-        val mediaButton = findViewById<MaterialTextView>(R.id.media_button)
+
+        recyclerView = findViewById(R.id.recycler_view_track)
+        trackList = createTrackList()
+        trackAdepter = TrackAdepter(trackList)
+        recyclerView.adapter =trackAdepter
 
         searchEditText.setText(saveTextInput)
 
@@ -82,6 +84,11 @@ class SearchActivity : AppCompatActivity() {
             }
         })
 
+        // Кнопка "Назад" возвращает в предыдущий экран
+        backArrowImageView.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
         fun hideKeyboard() {
             val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
             imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
@@ -92,5 +99,40 @@ class SearchActivity : AppCompatActivity() {
             searchEditText.setText("")
             hideKeyboard()
         }
+    }
+
+    private fun createTrackList(): List<Track> {
+        return listOf(
+            Track(
+                getString(R.string.track_1_name),
+                getString(R.string.track_1_artist),
+                getString(R.string.track_1_time),
+                getString(R.string.track_1_url)
+            ),
+            Track(
+                getString(R.string.track_2_name),
+                getString(R.string.track_2_artist),
+                getString(R.string.track_2_time),
+                getString(R.string.track_2_url)
+            ),
+            Track(
+                getString(R.string.track_3_name),
+                getString(R.string.track_3_artist),
+                getString(R.string.track_3_time),
+                getString(R.string.track_3_url)
+            ),
+            Track(
+                getString(R.string.track_4_name),
+                getString(R.string.track_4_artist),
+                getString(R.string.track_4_time),
+                getString(R.string.track_4_url)
+            ),
+            Track(
+                getString(R.string.track_5_name),
+                getString(R.string.track_5_artist),
+                getString(R.string.track_5_time),
+                getString(R.string.track_5_url)
+            )
+        )
     }
 }

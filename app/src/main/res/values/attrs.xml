@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="colorTextHintPrimary" format="color"/>
+    <attr name="iconColor" format="color"/>
+    <attr name="colorArtistNameText" format="color"/>
+    <attr name="colorTimeTrackText" format="color"/>
+
+</resources>
+

@@ -12,4 +12,8 @@
     <color name="switchOn">#00D6C3</color>
     <color name="backgroundSwitch">#76EAE0</color>
 
+<!--    &lt;!&ndash; Стандартные цвета для свитча для темной темы &ndash;&gt;-->
+<!--    <color name="switchOn">#3772E7</color>-->
+<!--    <color name="backgroundSwitch">#9FBBF3</color>-->
+
 </resources>

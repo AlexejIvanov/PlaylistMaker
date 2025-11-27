@@ -6,8 +6,7 @@
     android:id="@+id/settings"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    style="@style/backgroundColorActivity">
+    android:orientation="vertical">
 
 
     <LinearLayout
@@ -70,4 +69,4 @@
         android:text="@string/user_agreement"
         style="@style/textSettings"/>
 
-    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    style="@style/backgroundColorActivity">
+
+    <ImageView
+    android:id="@+id/CoverTack"
+    android:layout_width="@dimen/track_cover_size"
+    android:layout_height="@dimen/track_cover_size"
+    android:layout_marginTop="@dimen/margin_mini"
+    android:layout_marginBottom="@dimen/margin_mini"
+    android:scaleType="centerCrop" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginStart="@dimen/margin_mini"
+        android:layout_marginEnd="@dimen/margin_mini"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/TrackName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_x_small"
+        android:textSize="@dimen/text_size_normal"
+        android:fontFamily="@font/ys_display_regular"
+        android:maxLines="1"
+        android:textColor="?attr/colorOnSurface"
+        android:singleLine="true"
+        android:ellipsize="end"
+        tools:text="Название Трека"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/ArtistName"
+            android:layout_width="@dimen/track_artist_width"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/artist_mane_text_size"
+            android:fontFamily="@font/ys_display_regular"
+            android:textColor="?attr/colorArtistNameText"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:singleLine="true"
+            tools:text="Имя Артиста"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_dot_13"/>
+
+        <TextView
+            android:id="@+id/TrackTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/artist_mane_text_size"
+            android:fontFamily="@font/ys_display_regular"
+            android:textColor="?attr/colorTimeTrackText"
+            tools:text="03:45"/>
+    </LinearLayout>
+
+</LinearLayout>
+
+    <ImageView
+        android:id="@+id/TrackSelectionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/arrow_forward_24"
+        android:layout_gravity="center_vertical"
+        app:tint="?attr/iconColor"/>
+
+</LinearLayout>
