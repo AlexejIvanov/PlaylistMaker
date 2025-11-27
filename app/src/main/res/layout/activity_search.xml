@@ -4,8 +4,7 @@
     android:id="@+id/search"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    style="@style/backgroundColorActivity">
+    android:orientation="vertical">
 
 
     <LinearLayout
@@ -39,16 +38,16 @@
         android:orientation="horizontal"
         android:background="@drawable/search_bar_bg">
 
-    <EditText
-        android:id="@+id/search_edit_text"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="@dimen/layout_height"
-        android:drawableStart="@drawable/search_icon"
-        android:inputType="text"
-        android:hint="@string/search"
-        android:textColor="@color/yp_black"
-        style="@style/searchBar"/>
+        <EditText
+            android:id="@+id/search_edit_text"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="@dimen/layout_height"
+            android:drawableStart="@drawable/search_icon"
+            android:inputType="text"
+            android:hint="@string/search"
+            android:textColor="@color/yp_black"
+            style="@style/searchBar"/>
 
         <ImageView
             android:id="@+id/clear_button"
@@ -63,11 +62,11 @@
     </LinearLayout>
 
 
-    <View
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_track"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
-
-
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/margin_small"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 </LinearLayout>

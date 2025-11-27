@@ -1,16 +1,18 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-<!--    &lt;!&ndash; Base application theme. &ndash;&gt;-->
-<!--    <style name="Base.Theme.PlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">-->
-<!--        &lt;!&ndash; Primary brand color.-->
-<!--        <item name="colorPrimary">@color/yp_black</item>-->
-<!--        <item name="colorPrimaryVariant">@color/yp_white</item>-->
-<!--        <item name="colorOnPrimary">@color/yp_white</item>-->
-<!--         Secondary brand color.-->
-<!--        <item name="colorSecondary">@color/yp_white</item>-->
-<!--        <item name="colorSecondaryVariant">@color/teal_200</item>-->
-<!--        <item name="colorOnSecondary">@color/black</item>-->
-<!--        Status bar color.-->
-<!--        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>-->
-<!--        Customize your theme here. &ndash;&gt;-->
-<!--    </style>-->
+    <!-- Base application theme. -->
+    <style name="Base.Theme.PlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <item name="colorPrimary">@color/yp_black</item>
+        <item name="colorOnPrimary">@color/yp_white</item>
+        <item name="colorSurface">@color/yp_black</item>
+        <item name="colorOnSurface">@color/yp_white</item>
+        <item name="colorOnSurfaceVariant">@color/yp_white</item>
+        <item name="colorTextHintPrimary">@color/yp_black</item>
+        <item name="android:windowBackground">@color/yp_black</item>
+        <item name="iconColor">@color/yp_white</item>
+        <item name="colorArtistNameText">@color/yp_white</item>
+        <item name="colorTimeTrackText">@color/yp_white</item>
+    </style>
+
+    <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
 </resources>
