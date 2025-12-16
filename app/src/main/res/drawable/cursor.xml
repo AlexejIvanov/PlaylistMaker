@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Ширина курсора -->
+    <size android:width="2dp" />
+
+    <!-- Цвет курсора -->
+    <solid android:color="@color/yp_blue" />
+
+    <!-- Радиус скругления -->
+    <corners android:radius="2dp" />
+
+</shape>

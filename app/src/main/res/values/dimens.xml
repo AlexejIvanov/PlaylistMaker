@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Отступы -->
-    <dimen name="padding_top_small">14dp</dimen>
-    <dimen name="padding_bottom_large">28dp</dimen>
-    <dimen name="padding_horizontal">16dp</dimen>
-    <dimen name="padding_end_small">12dp</dimen>
-    <dimen name="padding_start_small">12dp</dimen>
-    <dimen name="padding_vertical">20dp</dimen>
+    <!-- Размеры текста -->
+    <dimen name="artist_mane_text_size">11sp</dimen>
+    <dimen name="text_size_12">12sp</dimen>
+    <dimen name="text_size_14">14sp</dimen>
+    <dimen name="text_size_16">16sp</dimen>
+    <dimen name="text_size_19">19sp</dimen>
+    <dimen name="text_size_title">22sp</dimen>
 
-
-
-    <!-- Отступы между элементами -->
+    <!-- Внешние отступы (Margins) -->
     <dimen name="margin_x_small">1dp</dimen>
     <dimen name="margin_mini">8dp</dimen>
     <dimen name="margin_small_end">12dp</dimen>
@@ -18,30 +16,26 @@
     <dimen name="margin_top_medium">24dp</dimen>
     <dimen name="margin_top_large">42dp</dimen>
     <dimen name="margin_top_extra_large">45dp</dimen>
-    <dimen name="track_cover_size">45dp</dimen>
 
-    <!-- Отступы внутри элемента -->
+    <!-- Внутренние отступы (Paddings) -->
     <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_start_small">12dp</dimen>
+    <dimen name="padding_end_small">12dp</dimen>
+    <dimen name="padding_top_small">14dp</dimen>
+    <dimen name="padding_horizontal">16dp</dimen>
     <dimen name="padding_medium">16dp</dimen>
+    <dimen name="padding_vertical">20dp</dimen>
+    <dimen name="padding_bottom_large">28dp</dimen>
 
-    <!-- Радиусы -->
-    <dimen name="corner_radius_button">16dp</dimen>
-    <dimen name="corner_radius_search_bar">8dp</dimen>
-
-
-    <!-- Размеры текста -->
-    <dimen name="text_size_title">22sp</dimen>
-    <dimen name="text_size_normal">16sp</dimen>
-    <dimen name="text_size_small">12sp</dimen>
-    <dimen name="artist_mane_text_size">11sp</dimen>
-
-    <!-- Размеры layout -->
-    <dimen name="layout_height">36dp</dimen>
-
-
-    <!-- Звкругление обложки трека -->
+    <!-- Радиусы скругления (Corners) -->
     <dimen name="track_cover_corner_radius">2dp</dimen>
+    <dimen name="corner_radius_search_bar">8dp</dimen>
+    <dimen name="corner_radius_button">16dp</dimen>
+    <dimen name="button_refresh_radius">54dp</dimen>
 
-    <!-- Длина текста имени исполнителя -->
+    <!-- Размеры конкретных элементов (Component Sizes) -->
+    <dimen name="layout_height">36dp</dimen>
+    <dimen name="track_cover_size">45dp</dimen>
     <dimen name="track_artist_width">54dp</dimen>
+
 </resources>

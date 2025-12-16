@@ -8,12 +8,12 @@
     <color name="yp_red">#F56B6C</color>
     <color name="yp_blue">#3772E7</color>
 
-    <!-- Стандартные цвета для свитча для светлой темы -->
+    <!-- Цвета для свитча для светлой темы -->
     <color name="switchOn">#00D6C3</color>
     <color name="backgroundSwitch">#76EAE0</color>
 
-<!--    &lt;!&ndash; Стандартные цвета для свитча для темной темы &ndash;&gt;-->
-<!--    <color name="switchOn">#3772E7</color>-->
-<!--    <color name="backgroundSwitch">#9FBBF3</color>-->
+    <!-- Цвета для свитча для темной темы -->
+    <color name="switchOnNight">#3772E7</color>
+    <color name="backgroundSwitchNight">#9FBBF3</color>
 
 </resources>

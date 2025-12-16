@@ -4,6 +4,8 @@
         <!-- Customize your light theme here. -->
         <item name="colorPrimary">@color/yp_black</item>
         <item name="colorOnPrimary">@color/yp_white</item>
+        <item name="colorSecondary">@color/yp_blue</item>
+        <item name="colorOnSecondary">@color/yp_white</item>
         <item name="colorSurface">@color/yp_black</item>
         <item name="colorOnSurface">@color/yp_white</item>
         <item name="colorOnSurfaceVariant">@color/yp_white</item>
