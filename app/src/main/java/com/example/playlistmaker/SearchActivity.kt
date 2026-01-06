@@ -201,8 +201,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
     // Настройка Edge-to-Edge (работы с системными отступами)
-    // Этот код гарантирует, что наш интерфейс не будет перекрыт системными панелями
-    // (строкой состояния сверху или навигационной панелью снизу).
     private fun setupWindowInsets() {
         val density = resources.displayMetrics.density
         val sidePadding = (16 * density).toInt()
@@ -235,9 +233,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         // 3. Вызов Retrofit
-        // Мы берем наш синглтон ItunesClient, вызываем метод search() и передаем текст.
-        // Метод .enqueue() отправляет запрос ассинхронно (в фоновом потоке),
-        // чтобы приложение не зависло во время ожидания ответа.
+
         ItunesClient.itunesApiService.search(searchText).enqueue(object : Callback<ITunesResponse> {
 
             // onResponse вызывается, когда сервер прислал какой-то ответ
