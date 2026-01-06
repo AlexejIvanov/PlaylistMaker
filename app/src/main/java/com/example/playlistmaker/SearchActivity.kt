@@ -1,5 +1,3 @@
-
-
 // --- Я веду комментарии к коду для запоминания того, что было сделано ранее. ---
 // --- В релизной версии комменты будут убраны. ---
 
@@ -21,6 +19,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.App.Companion.PLAYLIST_MAKER_PREFERENCES
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -44,6 +43,16 @@ class SearchActivity : AppCompatActivity() {
     // --- Изменяемый список треков ---
     private val trackList = ArrayList<Track>()
 
+    // История поиска
+    private lateinit var searchHistory: SearchHistory
+    private lateinit var historyAdapter: TrackAdapter
+    private var historyList = ArrayList<Track>()
+
+    // Элементы интерфейса истории
+    private lateinit var historyLayout: LinearLayout
+    private lateinit var historyRecyclerView: RecyclerView
+    private lateinit var clearHistoryButton: Button
+
     // Метод сохранения состояния
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -61,16 +70,42 @@ class SearchActivity : AppCompatActivity() {
         // Настройка отступов
         setupWindowInsets()
 
+        searchEditText.post {
+            searchEditText.requestFocus()
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT)
+        }
+
+        // 1. Инициализация SearchHistory
+        // Используй то же имя файла настроек "PLAYLIST_MAKER_PREFERENCES"
+        val sharePrefs = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, Context.MODE_PRIVATE)
+        searchHistory = SearchHistory(sharePrefs)
+
+
+        // 2. Инициализация адаптера поиска (Исправляем ошибку!)
+        // В лямбде { track -> ... } вызови searchHistory.add(track)
+        trackAdapter = TrackAdapter(trackList) { track ->
+            searchHistory.add(track)
+            android.widget.Toast.makeText(
+                this, "Трек добавлен в историю", android.widget.Toast.LENGTH_SHORT
+            ).show()
+        }
+        recyclerView.adapter = trackAdapter
+
+        // 3. Инициализация адаптера истории
+        historyAdapter = TrackAdapter(historyList) { track ->
+            searchHistory.add(track)
+            historyList.clear()
+            historyList.addAll(searchHistory.read())
+            historyAdapter.notifyDataSetChanged()
+        }
+        historyRecyclerView.adapter = historyAdapter
+
         // Восстановление текста
         if (savedInstanceState != null) {
             saveTextInput = savedInstanceState.getString(SAVE_TEXT, TEXT_DEF)
             searchEditText.setText(saveTextInput)
         }
-
-        // Настройка RecyclerView
-        trackAdapter = TrackAdapter(trackList)
-        recyclerView.adapter = trackAdapter
-
 
         // --- Слушатели ---
 
@@ -88,15 +123,25 @@ class SearchActivity : AppCompatActivity() {
             showMessage(SearchResult.NO_RESULTS_OR_CLEAR)
         }
 
-        // 3. Изменение текста (в виде лямбды-выражения)
+        // 3. Изменение текста и логика показа истории
         searchEditText.doOnTextChanged { s, _, _, _ ->
             clearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
-            saveTextInput = s?.toString() ?: ""
+            if (searchEditText.hasFocus() && s?.isEmpty() == true && searchHistory.read()
+                    .isNotEmpty()
+            ) {
+                recyclerView.visibility = View.GONE
+                placeholderNothingFound.visibility = View.GONE
+                placeholderNetworkError.visibility = View.GONE
+                historyList.clear()
+                historyList.addAll(searchHistory.read())
+                historyAdapter.notifyDataSetChanged()
+                historyLayout.visibility = View.VISIBLE
 
-            if (s.isNullOrEmpty()) {
-                showMessage(SearchResult.NO_RESULTS_OR_CLEAR)
+            } else {
+                historyLayout.visibility = View.GONE
             }
         }
+
 
         // 4. Нажатие "Done" на клавиатуре
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
@@ -117,11 +162,31 @@ class SearchActivity : AppCompatActivity() {
         refreshButton.setOnClickListener {
             performSearch()
         }
+
+        // 6. Обработка логики фокуса
+        searchEditText.setOnFocusChangeListener { view, hasFocus ->
+            if (hasFocus && searchEditText.text.isEmpty() && searchHistory.read().isNotEmpty()) {
+
+                historyList.clear()
+                historyList.addAll(searchHistory.read())
+                historyAdapter.notifyDataSetChanged()
+                historyLayout.visibility = View.VISIBLE
+            } else {
+                historyLayout.visibility = View.GONE
+            }
+
+        }
+        // 7. Очищаем поиск
+        clearHistoryButton.setOnClickListener {
+            searchHistory.clear()
+            historyList.clear()
+            historyAdapter.notifyDataSetChanged()
+            historyLayout.visibility = View.GONE
+        }
     }
 
+
     // Инициализация View-элементов
-    // Метод находит элементы в XML-макете по их ID и присваивает их переменным.
-    // Это позволяет обращаться к кнопкам, спискам и текстовым полям из кода.
     private fun initViews() {
         backArrowImageView = findViewById(R.id.back_button)
         clearButton = findViewById(R.id.clear_button)
@@ -130,6 +195,9 @@ class SearchActivity : AppCompatActivity() {
         placeholderNothingFound = findViewById(R.id.placeholder_nothing_found)
         placeholderNetworkError = findViewById(R.id.placeholder_network_error)
         refreshButton = findViewById(R.id.refresh_button)
+        historyLayout = findViewById(R.id.history_layout)
+        historyRecyclerView = findViewById(R.id.recycler_view_history)
+        clearHistoryButton = findViewById(R.id.clear_button_history)
     }
 
     // Настройка Edge-to-Edge (работы с системными отступами)
@@ -170,40 +238,38 @@ class SearchActivity : AppCompatActivity() {
         // Мы берем наш синглтон ItunesClient, вызываем метод search() и передаем текст.
         // Метод .enqueue() отправляет запрос ассинхронно (в фоновом потоке),
         // чтобы приложение не зависло во время ожидания ответа.
-        ItunesClient.itunesApiService.search(searchText)
-            .enqueue(object : Callback<ITunesResponse> {
+        ItunesClient.itunesApiService.search(searchText).enqueue(object : Callback<ITunesResponse> {
 
-                // onResponse вызывается, когда сервер прислал какой-то ответ
-                override fun onResponse(
-                    call: Call<ITunesResponse>,
-                    response: Response<ITunesResponse>
-                ) {
-                    // Проверяем код ответа. 200 означает "Всё хорошо"
-                    if (response.code() == 200) {
-                        trackList.clear() // Очищаем старые результаты
+            // onResponse вызывается, когда сервер прислал какой-то ответ
+            override fun onResponse(
+                call: Call<ITunesResponse>, response: Response<ITunesResponse>
+            ) {
+                // Проверяем код ответа. 200 означает "Всё хорошо"
+                if (response.code() == 200) {
+                    trackList.clear() // Очищаем старые результаты
 
-                        // Проверяем, что список результатов (results) не пустой
-                        if (response.body()?.results?.isNotEmpty() == true) {
-                            // УСПЕХ: Добавляем треки в список и обновляем адаптер
-                            trackList.addAll(response.body()!!.results)
-                            trackAdapter.notifyDataSetChanged()
-                            showMessage(SearchResult.SUCCESS)
-                        } else {
-                            // ПУСТО: Сервер ответил 200, но ничего не нашел по запросу
-                            showMessage(SearchResult.EMPTY)
-                        }
+                    // Проверяем, что список результатов (results) не пустой
+                    if (response.body()?.results?.isNotEmpty() == true) {
+                        // УСПЕХ: Добавляем треки в список и обновляем адаптер
+                        trackList.addAll(response.body()!!.results)
+                        trackAdapter.notifyDataSetChanged()
+                        showMessage(SearchResult.SUCCESS)
                     } else {
-                        // ОШИБКА СЕРВЕРА: Код ответа не 200 (например 404, 500)
-                        showMessage(SearchResult.ERROR)
+                        // ПУСТО: Сервер ответил 200, но ничего не нашел по запросу
+                        showMessage(SearchResult.EMPTY)
                     }
-                }
-
-                // onFailure вызывается, если запрос вообще не ушел или оборвался
-                // (например, нет интернета на телефоне)
-                override fun onFailure(call: Call<ITunesResponse>, t: Throwable) {
+                } else {
+                    // ОШИБКА СЕРВЕРА: Код ответа не 200 (например 404, 500)
                     showMessage(SearchResult.ERROR)
                 }
-            })
+            }
+
+            // onFailure вызывается, если запрос вообще не ушел или оборвался
+            // (например, нет интернета на телефоне)
+            override fun onFailure(call: Call<ITunesResponse>, t: Throwable) {
+                showMessage(SearchResult.ERROR)
+            }
+        })
     }
 
     // Перечисление (Enum) возможных состояний экрана.
@@ -211,10 +277,13 @@ class SearchActivity : AppCompatActivity() {
     enum class SearchResult {
         // Данные успешно загружены
         SUCCESS,
+
         // Поиск прошел, но ничего не найдено
         EMPTY,
+
         // Ошибка сети или сервера
         ERROR,
+
         // Поле поиска пустое или очищено
         NO_RESULTS_OR_CLEAR
     }
@@ -222,47 +291,59 @@ class SearchActivity : AppCompatActivity() {
     // Метод управления видимостью (State Management)
     // Он переключает слои (View): либо список треков, либо одну из заглушек.
     private fun showMessage(result: SearchResult) {
-        // Сначала скрываем ВСЁ. Это безопасный подход "от чистого листа".
+        // Скрываем основные элементы результатов и плейсхолдеры
         recyclerView.visibility = View.GONE
         placeholderNothingFound.visibility = View.GONE
         placeholderNetworkError.visibility = View.GONE
 
-        // Включаем только то, что нужно для текущего состояния
+
+        historyLayout.visibility = View.GONE
+
         when (result) {
             SearchResult.SUCCESS -> {
                 recyclerView.visibility = View.VISIBLE
             }
 
             SearchResult.EMPTY -> {
-                // Если ничего не найдено, очищаем список адаптера и показываем заглушку
                 trackList.clear()
                 trackAdapter.notifyDataSetChanged()
                 placeholderNothingFound.visibility = View.VISIBLE
             }
 
             SearchResult.ERROR -> {
-                // Если ошибка, тоже очищаем список и показываем заглушку ошибки
                 trackList.clear()
                 trackAdapter.notifyDataSetChanged()
                 placeholderNetworkError.visibility = View.VISIBLE
             }
 
             SearchResult.NO_RESULTS_OR_CLEAR -> {
-                // Если просто очистили поиск, убираем всё с экрана
+                // 1. Очищаем результаты поиска
                 trackList.clear()
                 trackAdapter.notifyDataSetChanged()
+
+                // 2. ТЕПЕРЬ ПРОВЕРЯЕМ ИСТОРИЮ ЗДЕСЬ
+                // Если история не пустая — показываем её
+                val history = searchHistory.read()
+                if (history.isNotEmpty()) {
+                    historyList.clear()
+                    historyList.addAll(history)
+                    historyAdapter.notifyDataSetChanged()
+                    historyLayout.visibility = View.VISIBLE
+                } else {
+                    historyLayout.visibility = View.GONE
+                }
             }
         }
     }
 
-    // Метод для скрытия клавиатуры
+    // Метод для скрытия клавиатуры.
     // Получает системный сервис ввода и принудительно прячет клавиатуру для текущего окна.
     private fun hideKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
     }
 
-    // Companion Object для хранения констант
+    // Companion Object для хранения констант.
     // Используется для сохранения текста поискового запроса при пересоздании Activity
     // (например, при повороте экрана).
     companion object {

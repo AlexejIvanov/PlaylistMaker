@@ -36,7 +36,14 @@ class SettingsActivity : AppCompatActivity() {
         val shareButton = findViewById<TextView>(R.id.share_button)
         val supportButton = findViewById<TextView>(R.id.support_button)
         val userAgreementButton = findViewById<TextView>(R.id.user_agreement_button)
+        val themeSwitch =
+            findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.theme_switch)
 
+        themeSwitch.isChecked = (applicationContext as App).darkTheme
+
+        themeSwitch.setOnCheckedChangeListener { swither, checked ->
+            (applicationContext as App).switchTheme(checked)
+        }
         // Кнопка "Назад" возвращает в предыдущий экран
         backArrowImageView.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
@@ -46,8 +53,8 @@ class SettingsActivity : AppCompatActivity() {
         shareButton.setOnClickListener {
             val shareText = getString(R.string.share_link)
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                type ="text/plain"
-                putExtra(Intent.EXTRA_TEXT,shareText)
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, shareText)
             }
             val chooser = Intent.createChooser(shareIntent, getString(R.string.share_link))
             startActivity(chooser)
@@ -58,7 +65,7 @@ class SettingsActivity : AppCompatActivity() {
             val recipient = arrayOf(getString(R.string.address_mail_to_support))
             val emailIntent = Intent(Intent.ACTION_SENDTO)
             emailIntent.data = Uri.parse("mailto:")
-            emailIntent.putExtra(Intent.EXTRA_EMAIL,recipient)
+            emailIntent.putExtra(Intent.EXTRA_EMAIL, recipient)
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, getText(R.string.subject_mail_to_support))
             emailIntent.putExtra(Intent.EXTRA_TEXT, getText(R.string.text_mail_to_support))
             startActivity(emailIntent)
@@ -70,7 +77,6 @@ class SettingsActivity : AppCompatActivity() {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(linkAgreement))
             startActivity(browserIntent)
         }
-
 
 
     }
