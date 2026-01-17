@@ -9,7 +9,7 @@
     <color name="yp_blue">#3772E7</color>
 
     <!-- Цвета для свитча для светлой темы -->
-    <color name="switchOn">#00D6C3</color>
+    <color name="switchOn">#3772E7</color>
     <color name="backgroundSwitch">#76EAE0</color>
 
     <!-- Цвета для свитча для темной темы -->

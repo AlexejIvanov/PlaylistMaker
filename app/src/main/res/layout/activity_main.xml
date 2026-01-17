@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
+    style="@style/backgroundColorMainActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:fitsSystemWindows="false"
-    style="@style/backgroundColorMainActivity">
+    android:orientation="vertical">
 
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:title="@string/app_name"
-        app:titleTextColor="@color/yp_white"
+        android:fontFamily="@font/ys_display_medium"
         android:textSize="@dimen/text_size_title"
-        android:fontFamily="@font/ys_display_medium" />
+        app:title="@string/app_name"
+        app:titleTextColor="@color/yp_white" />
 
 
     <Button
@@ -25,8 +24,8 @@
         style="@style/buttonMain"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_marginTop="@dimen/margin_top_medium"
+        android:layout_weight="1"
         android:text="@string/search"
         app:icon="@drawable/ic_search_icon" />
 

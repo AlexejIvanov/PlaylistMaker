@@ -27,5 +27,7 @@
     <string name="subject_mail_to_support">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="text_mail_to_support">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="no_email_app_found">Нет приложения для отправки письма!</string>
+    <string name="ClearHistoryText">Очистить историю</string>
+    <string name="YouSearchText">Вы искали</string>
 
 </resources>
