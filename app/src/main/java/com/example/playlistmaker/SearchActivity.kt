@@ -41,12 +41,12 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var refreshButton: Button
 
     // --- Изменяемый список треков ---
-    private val trackList = ArrayList<Track>()
+    private val trackList = mutableListOf<Track>()
 
     // История поиска
     private lateinit var searchHistory: SearchHistory
     private lateinit var historyAdapter: TrackAdapter
-    private var historyList = ArrayList<Track>()
+    private var historyList = mutableListOf<Track>()
 
     // Элементы интерфейса истории
     private lateinit var historyLayout: LinearLayout
@@ -77,18 +77,16 @@ class SearchActivity : AppCompatActivity() {
         }
 
         // 1. Инициализация SearchHistory
-        // Используй то же имя файла настроек "PLAYLIST_MAKER_PREFERENCES"
         val sharePrefs = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, Context.MODE_PRIVATE)
         searchHistory = SearchHistory(sharePrefs)
 
 
-        // 2. Инициализация адаптера поиска (Исправляем ошибку!)
-        // В лямбде { track -> ... } вызови searchHistory.add(track)
+        // 2. Инициализация адаптера поиска
         trackAdapter = TrackAdapter(trackList) { track ->
             searchHistory.add(track)
-            android.widget.Toast.makeText(
-                this, "Трек добавлен в историю", android.widget.Toast.LENGTH_SHORT
-            ).show()
+            val intent = android.content.Intent(this, PlayerActivity::class.java)
+            intent.putExtra(PlayerActivity.TRACK_KEY, com.google.gson.Gson().toJson(track))
+            startActivity(intent)
         }
         recyclerView.adapter = trackAdapter
 
@@ -98,6 +96,9 @@ class SearchActivity : AppCompatActivity() {
             historyList.clear()
             historyList.addAll(searchHistory.read())
             historyAdapter.notifyDataSetChanged()
+            val intent = android.content.Intent(this, PlayerActivity::class.java)
+            intent.putExtra(PlayerActivity.TRACK_KEY, com.google.gson.Gson().toJson(track))
+            startActivity(intent)
         }
         historyRecyclerView.adapter = historyAdapter
 
@@ -269,7 +270,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
     // Перечисление (Enum) возможных состояний экрана.
-    // Это помогает избежать путаницы и магических чисел в коде.
     enum class SearchResult {
         // Данные успешно загружены
         SUCCESS,

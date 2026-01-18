@@ -20,8 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="0.05"
-            android:padding="16dp"
-            android:src="@drawable/ic_arrow_back" />
+            android:src="@drawable/ic_arrow_back_48x48" />
 
         <com.google.android.material.appbar.MaterialToolbar
             style="@style/nameActivity"

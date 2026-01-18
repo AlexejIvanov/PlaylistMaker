@@ -21,7 +21,7 @@
     <string name="user_agreement">Пользовательское соглашение</string>
 
     <!-- Экран Настроек: Функционал (Ссылки и Email) -->
-    <string name="share_link">Привет! Вот ссылка на крурс по Android-разработки от Яндекс Практикума!\n\nhttps://practicum.yandex.ru/android-developer/</string>
+    <string name="share_link">Привет! Вот ссылка на курс по Android-разработки от Яндекс Практикума!\n\nhttps://practicum.yandex.ru/android-developer/</string>
     <string name="link_to_the_user_agreement">https://yandex.ru/legal/practicum_offer/ru</string>
     <string name="address_mail_to_support">alex-sensey@yandex.ru</string>
     <string name="subject_mail_to_support">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
