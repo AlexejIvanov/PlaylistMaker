@@ -1,10 +1,12 @@
-// --- Я веду комментарии к коду для запоминания того, что было сделано ранее. ---
-// --- В релизной версии комменты будут убраны. ---
+// Я веду комментарии к коду для запоминания того, что было сделано ранее.
+// В релизной версии комменты будут убраны.
 
 package com.example.playlistmaker
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -12,6 +14,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -20,6 +23,8 @@ import androidx.core.view.updatePadding
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.App.Companion.PLAYLIST_MAKER_PREFERENCES
+import com.google.gson.Gson
+import okhttp3.internal.http2.Http2Reader
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -39,19 +44,27 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var placeholderNothingFound: LinearLayout
     private lateinit var placeholderNetworkError: LinearLayout
     private lateinit var refreshButton: Button
+    private lateinit var progressBar: ProgressBar
 
-    // --- Изменяемый список треков ---
+
+    // --- Изменяемый список треков для результатов поиска ---
     private val trackList = mutableListOf<Track>()
 
     // История поиска
     private lateinit var searchHistory: SearchHistory
     private lateinit var historyAdapter: TrackAdapter
-    private var historyList = mutableListOf<Track>()
+    private val historyList = mutableListOf<Track>()
 
     // Элементы интерфейса истории
     private lateinit var historyLayout: LinearLayout
     private lateinit var historyRecyclerView: RecyclerView
     private lateinit var clearHistoryButton: Button
+
+    //Handler и debounce флаг
+    private val handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { performSearch() }
+    private var isClickAllowed =  true
+
 
     // Метод сохранения состояния
     override fun onSaveInstanceState(outState: Bundle) {
@@ -67,9 +80,10 @@ class SearchActivity : AppCompatActivity() {
         // Инициализация UI
         initViews()
 
-        // Настройка отступов
+        // Настройка отступов (Edge-to-Edge)
         setupWindowInsets()
 
+        // Запрашиваем фокус на поле поиска и показываем клавиатуру при запуске Activity
         searchEditText.post {
             searchEditText.requestFocus()
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -80,29 +94,37 @@ class SearchActivity : AppCompatActivity() {
         val sharePrefs = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, Context.MODE_PRIVATE)
         searchHistory = SearchHistory(sharePrefs)
 
-
-        // 2. Инициализация адаптера поиска
+        // 2. Инициализация адаптера для результатов поиска
         trackAdapter = TrackAdapter(trackList) { track ->
+            trackClickDebounce {
             searchHistory.add(track)
-            val intent = android.content.Intent(this, PlayerActivity::class.java)
-            intent.putExtra(PlayerActivity.TRACK_KEY, com.google.gson.Gson().toJson(track))
-            startActivity(intent)
+            val intent = android.content.Intent(this, PlayerActivity::class.java).apply {
+                putExtra(PlayerActivity.TRACK_KEY, Gson().toJson(track))
+                }
+                startActivity(intent)
+            }
+
         }
         recyclerView.adapter = trackAdapter
 
-        // 3. Инициализация адаптера истории
+        // 3. Инициализация адаптера для истории поиска
         historyAdapter = TrackAdapter(historyList) { track ->
-            searchHistory.add(track)
-            historyList.clear()
-            historyList.addAll(searchHistory.read())
-            historyAdapter.notifyDataSetChanged()
-            val intent = android.content.Intent(this, PlayerActivity::class.java)
-            intent.putExtra(PlayerActivity.TRACK_KEY, com.google.gson.Gson().toJson(track))
-            startActivity(intent)
+            trackClickDebounce {
+                searchHistory.add(track)
+                // Обновляем историю и список, чтобы выбранный трек оказался сверху
+                historyList.clear()
+                historyList.addAll(searchHistory.read())
+                historyAdapter.notifyDataSetChanged()
+
+                val intent = android.content.Intent(this, PlayerActivity::class.java).apply {
+                    putExtra(PlayerActivity.TRACK_KEY, Gson().toJson(track))
+                }
+                startActivity(intent)
+            }
         }
         historyRecyclerView.adapter = historyAdapter
 
-        // Восстановление текста
+        // Восстановление текста поискового запроса при пересоздании Activity
         if (savedInstanceState != null) {
             saveTextInput = savedInstanceState.getString(SAVE_TEXT, TEXT_DEF)
             searchEditText.setText(saveTextInput)
@@ -124,66 +146,67 @@ class SearchActivity : AppCompatActivity() {
             showMessage(SearchResult.NO_RESULTS_OR_CLEAR)
         }
 
-        // 3. Изменение текста и логика показа истории
+        // 3. Отслеживание изменения текста в поле поиска и логика показа истории
         searchEditText.doOnTextChanged { s, _, _, _ ->
-            clearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
-            if (searchEditText.hasFocus() && s?.isEmpty() == true && searchHistory.read()
-                    .isNotEmpty()
-            ) {
-                recyclerView.visibility = View.GONE
-                placeholderNothingFound.visibility = View.GONE
-                placeholderNetworkError.visibility = View.GONE
-                historyList.clear()
-                historyList.addAll(searchHistory.read())
-                historyAdapter.notifyDataSetChanged()
-                historyLayout.visibility = View.VISIBLE
+            val query = s.toString()
+            saveTextInput = query // Сохраняем текущий текст запроса
+            clearButton.visibility = if (query.isEmpty()) View.GONE else View.VISIBLE
 
-            } else {
+            handler.removeCallbacks(searchRunnable) // Отменяем все предыдущие запланированные поиски
+
+            if(query.isNotEmpty()) {
+                handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
                 historyLayout.visibility = View.GONE
-            }
-        }
-
-
-        // 4. Нажатие "Done" на клавиатуре
-        searchEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                if (searchEditText.text.isNotEmpty()) {
-                    performSearch()
-                } else {
-                    hideKeyboard()
-                    showMessage(SearchResult.NO_RESULTS_OR_CLEAR)
-                }
-                true
             } else {
-                false
+                if (searchEditText.hasFocus() && query.isEmpty() && searchHistory.read().isNotEmpty()) {
+                    showHistoryLayout()
+                } else {
+                    historyLayout.visibility = View.GONE
+                }
+
             }
         }
 
-        // 5. Кнопка "Обновить"
+        // 4. Нажатие "Done" на клавиатуре для выполнения поиска
+//        searchEditText.setOnEditorActionListener { _, actionId, _ ->
+//            if (actionId == EditorInfo.IME_ACTION_DONE) {
+//                if (searchEditText.text.isNotEmpty()) {
+//                    hideKeyboard()
+//                    showMessage(SearchResult.NO_RESULTS_OR_CLEAR)
+//                }
+//                true
+//            } else {
+//                false
+//            }
+//        }
+
+        // 5. Кнопка "Обновить" (для повторного поиска после ошибки сети)
         refreshButton.setOnClickListener {
             performSearch()
         }
 
-        // 6. Обработка логики фокуса
-        searchEditText.setOnFocusChangeListener { view, hasFocus ->
+        // 6. Обработка логики фокуса поля поиска
+        searchEditText.setOnFocusChangeListener { _, hasFocus ->
+            // Если поле в фокусе, пустое и история не пуста, показываем историю
             if (hasFocus && searchEditText.text.isEmpty() && searchHistory.read().isNotEmpty()) {
-
-                historyList.clear()
-                historyList.addAll(searchHistory.read())
-                historyAdapter.notifyDataSetChanged()
-                historyLayout.visibility = View.VISIBLE
+                showHistoryLayout()
             } else {
                 historyLayout.visibility = View.GONE
             }
-
         }
-        // 7. Очищаем поиск
+
+        // 7. Кнопка "Очистить историю поиска"
         clearHistoryButton.setOnClickListener {
             searchHistory.clear()
             historyList.clear()
             historyAdapter.notifyDataSetChanged()
             historyLayout.visibility = View.GONE
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(null) //Удаляем все задачи из android.os.Handler
     }
 
 
@@ -199,6 +222,7 @@ class SearchActivity : AppCompatActivity() {
         historyLayout = findViewById(R.id.history_layout)
         historyRecyclerView = findViewById(R.id.recycler_view_history)
         clearHistoryButton = findViewById(R.id.clear_button_history)
+        progressBar = findViewById(R.id.progress_bar)
     }
 
     // Настройка Edge-to-Edge (работы с системными отступами)
@@ -233,14 +257,16 @@ class SearchActivity : AppCompatActivity() {
             return
         }
 
-        // 3. Вызов Retrofit
+        showLoading()
 
+        // 3. Вызов Retrofit
         ItunesClient.itunesApiService.search(searchText).enqueue(object : Callback<ITunesResponse> {
 
             // onResponse вызывается, когда сервер прислал какой-то ответ
             override fun onResponse(
                 call: Call<ITunesResponse>, response: Response<ITunesResponse>
             ) {
+                hideLoading()
                 // Проверяем код ответа. 200 означает "Всё хорошо"
                 if (response.code() == 200) {
                     trackList.clear() // Очищаем старые результаты
@@ -264,36 +290,41 @@ class SearchActivity : AppCompatActivity() {
             // onFailure вызывается, если запрос вообще не ушел или оборвался
             // (например, нет интернета на телефоне)
             override fun onFailure(call: Call<ITunesResponse>, t: Throwable) {
+                hideLoading()
                 showMessage(SearchResult.ERROR)
             }
         })
     }
 
+    // Показывает макет истории поиска, скрывая другие элементы
+    private fun showHistoryLayout() {
+        recyclerView.visibility = View.GONE
+        placeholderNothingFound.visibility = View.GONE
+        placeholderNetworkError.visibility = View.GONE
+
+        historyList.clear()
+        historyList.addAll(searchHistory.read())
+        historyAdapter.notifyDataSetChanged()
+        historyLayout.visibility = View.VISIBLE
+    }
+
     // Перечисление (Enum) возможных состояний экрана.
     enum class SearchResult {
-        // Данные успешно загружены
-        SUCCESS,
-
-        // Поиск прошел, но ничего не найдено
-        EMPTY,
-
-        // Ошибка сети или сервера
-        ERROR,
-
-        // Поле поиска пустое или очищено
-        NO_RESULTS_OR_CLEAR
+        SUCCESS, // Данные успешно загружены
+        EMPTY,   // Поиск прошел, но ничего не найдено
+        ERROR,   // Ошибка сети или сервера
+        NO_RESULTS_OR_CLEAR // Поле поиска пустое или очищено
     }
 
     // Метод управления видимостью (State Management)
-    // Он переключает слои (View): либо список треков, либо одну из заглушек.
+    // Он переключает слои: либо список треков, либо одну из заглушек, либо историю.
     private fun showMessage(result: SearchResult) {
         // Скрываем основные элементы результатов и плейсхолдеры
         recyclerView.visibility = View.GONE
         placeholderNothingFound.visibility = View.GONE
         placeholderNetworkError.visibility = View.GONE
-
-
         historyLayout.visibility = View.GONE
+        progressBar.visibility = View.GONE
 
         when (result) {
             SearchResult.SUCCESS -> {
@@ -317,14 +348,11 @@ class SearchActivity : AppCompatActivity() {
                 trackList.clear()
                 trackAdapter.notifyDataSetChanged()
 
-                // 2. ТЕПЕРЬ ПРОВЕРЯЕМ ИСТОРИЮ ЗДЕСЬ
+                // 2. Проверяем историю
                 // Если история не пустая — показываем её
                 val history = searchHistory.read()
                 if (history.isNotEmpty()) {
-                    historyList.clear()
-                    historyList.addAll(history)
-                    historyAdapter.notifyDataSetChanged()
-                    historyLayout.visibility = View.VISIBLE
+                    showHistoryLayout()
                 } else {
                     historyLayout.visibility = View.GONE
                 }
@@ -339,11 +367,30 @@ class SearchActivity : AppCompatActivity() {
         imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
     }
 
-    // Companion Object для хранения констант.
-    // Используется для сохранения текста поискового запроса при пересоздании Activity
-    // (например, при повороте экрана).
+    private fun trackClickDebounce(action: () -> Unit) {
+        if(isClickAllowed) {
+            isClickAllowed = false
+            action.invoke()
+            handler.postDelayed({isClickAllowed = true}, CLICK_DEBOUNCE_DELAY)
+        }
+    }
+
+    private fun showLoading() {
+        progressBar.visibility = View.VISIBLE
+        recyclerView.visibility = View.GONE
+        placeholderNetworkError.visibility = View.GONE
+        placeholderNothingFound.visibility = View.GONE
+        historyLayout.visibility = View.GONE
+    }
+
+    private fun hideLoading() {
+        progressBar.visibility = View.GONE
+    }
+
     companion object {
         const val SAVE_TEXT = "SAVE_TEXT"
         const val TEXT_DEF = ""
+        const val SEARCH_DEBOUNCE_DELAY =  2000L
+        const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

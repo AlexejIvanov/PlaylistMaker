@@ -12,7 +12,8 @@ data class Track(
     @SerializedName("collectionName") val collectionName: String?, //Название альбома
     @SerializedName("releaseDate") val releaseDate: String?, //Год релиза трека
     @SerializedName("primaryGenreName") val primaryGenreName: String, //Жанр трека
-    @SerializedName("country") val country: String //Страна исполнителя
+    @SerializedName("country") val country: String, //Страна исполнителя
+    @SerializedName("previewUrl") val previewUrl: String
 ) : Serializable
 {
     fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")

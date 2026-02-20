@@ -19,8 +19,8 @@ class TrackAdapter(
     // ViewHolder хранит ссылки на View-элементы одного элемента списка
     class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val coverImage: ImageView = itemView.findViewById(R.id.CoverTack)
-        val trackName: TextView = itemView.findViewById(R.id.track_name)
-        val artistName: TextView = itemView.findViewById(R.id.artist_name)
+        val trackName: TextView = itemView.findViewById(R.id.TrackName)
+        val artistName: TextView = itemView.findViewById(R.id.ArtistName)
         val trackTime: TextView = itemView.findViewById(R.id.TrackTime)
 
         // Метод для заполнения View данными конкретного трека
