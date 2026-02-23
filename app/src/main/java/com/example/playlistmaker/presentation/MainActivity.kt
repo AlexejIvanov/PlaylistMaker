@@ -1,13 +1,16 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import com.example.playlistmaker.presentation.MediaActivity
+import com.example.playlistmaker.R
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         val sidePadding = (16 * density).toInt()
 
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById<android.view.View>(R.id.main)) { view, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById<View>(R.id.main)) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.updatePadding(
                 sidePadding + systemBars.left,
