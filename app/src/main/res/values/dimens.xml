@@ -32,6 +32,7 @@
     <dimen name="corner_radius_search_bar">8dp</dimen>
     <dimen name="corner_radius_button">16dp</dimen>
     <dimen name="button_refresh_radius">54dp</dimen>
+    <dimen name="album_cover_corner_radius">8dp</dimen>
 
     <!-- Размеры конкретных элементов (Component Sizes) -->
     <dimen name="layout_height">36dp</dimen>
