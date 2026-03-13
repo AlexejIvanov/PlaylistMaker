@@ -1,4 +1,4 @@
-package com.example.playlistmaker.presentation
+package com.example.playlistmaker.presentation.settings
 
 import android.content.Intent
 import android.net.Uri
@@ -11,19 +11,25 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
-import com.example.playlistmaker.domain.models.ThemeSettings
+import com.example.playlistmaker.di.ViewModelFactory
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
+
+    private lateinit var viewModel: SettingsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_settings)
+
         setupWindowInsets()
 
-        val settingsInteractor = Creator.provideSettingsInteractor(this)
+        // Инициализация ViewModel
+        val factory = ViewModelFactory(this)
+        viewModel = ViewModelProvider(this, factory)[SettingsViewModel::class.java]
 
         val backButton = findViewById<ImageView>(R.id.back_button)
         val themeSwitch = findViewById<SwitchMaterial>(R.id.theme_switch)
@@ -31,19 +37,17 @@ class SettingsActivity : AppCompatActivity() {
         val supportButton = findViewById<TextView>(R.id.support_button)
         val agreementButton = findViewById<TextView>(R.id.user_agreement_button)
 
-        // Установка текущего состояния переключателя
-        themeSwitch.isChecked = settingsInteractor.getThemeSettings().isDarkTheme
+        // Подписываемся на тему
+        viewModel.themeState.observe(this) { isDark ->
+            themeSwitch.isChecked = isDark
+        }
 
-        // Обработка переключения темы
         themeSwitch.setOnCheckedChangeListener { _, checked ->
-            settingsInteractor.updateThemeSettings(ThemeSettings(checked))
+            viewModel.switchTheme(checked)
         }
 
-        backButton.setOnClickListener {
-            finish()
-        }
+        backButton.setOnClickListener { finish() }
 
-        // Поделиться приложением
         shareButton.setOnClickListener {
             val shareText = getString(R.string.share_link)
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -53,7 +57,6 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(shareIntent, null))
         }
 
-        // Написать в поддержку
         supportButton.setOnClickListener {
             val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("mailto:")
@@ -64,13 +67,13 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(emailIntent)
         }
 
-        // Пользовательское соглашение
         agreementButton.setOnClickListener {
             val url = getString(R.string.link_to_the_user_agreement)
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(browserIntent)
         }
     }
+
     private fun setupWindowInsets() {
         val density = resources.displayMetrics.density
         val sidePadding = (16 * density).toInt()

@@ -1,4 +1,4 @@
-package com.example.playlistmaker.presentation
+package com.example.playlistmaker.presentation.media
 
 import android.os.Bundle
 import android.view.View
