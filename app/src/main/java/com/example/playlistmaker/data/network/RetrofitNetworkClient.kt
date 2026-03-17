@@ -5,20 +5,11 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.example.playlistmaker.data.dto.Response
 import com.example.playlistmaker.data.dto.TrackSearchRequest
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitNetworkClient(private val context: Context) : NetworkClient {
-
-
-    private val itunesBaseUrl = "https://itunes.apple.com"
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(itunesBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val iTunesService = retrofit.create(ITunesApiService::class.java)
+class RetrofitNetworkClient(
+    private val context: Context,
+    private val iTunesService: ITunesApiService
+) : NetworkClient {
 
     override fun doRequest(dto: Any): Response {
         if (!isConnected()) {
@@ -38,6 +29,7 @@ class RetrofitNetworkClient(private val context: Context) : NetworkClient {
             Response().apply { resultCode = 500 }
         }
     }
+
 
     private fun isConnected(): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

@@ -22,13 +22,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.di.ViewModelFactory
 import com.example.playlistmaker.presentation.player.PlayerActivity
 import com.google.gson.Gson
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel: SearchViewModel by viewModel()
 
     // UI элементы
     private lateinit var searchEditText: EditText
@@ -56,9 +56,6 @@ class SearchActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_search)
 
-        // Инициализация ViewModel
-        val factory = ViewModelFactory(this)
-        viewModel = ViewModelProvider(this, factory)[SearchViewModel::class.java]
 
         initViews()
         setupAdapters()

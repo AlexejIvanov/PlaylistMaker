@@ -11,13 +11,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.di.ViewModelFactory
 import com.google.gson.Gson
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -27,7 +26,7 @@ class PlayerActivity : AppCompatActivity() {
         const val TRACK_KEY = "TRACK_KEY"
     }
 
-    private lateinit var viewModel: PlayerViewModel
+    private val viewModel: PlayerViewModel by viewModel()
 
     // UI
     private lateinit var backButton: ImageView
@@ -51,10 +50,6 @@ class PlayerActivity : AppCompatActivity() {
 
         initViews()
         setupWindowInsets()
-
-        // Создаем ViewModel через фабрику
-        val factory = ViewModelFactory(this)
-        viewModel = ViewModelProvider(this, factory)[PlayerViewModel::class.java]
 
         val json = intent.getStringExtra(TRACK_KEY)
         val track = Gson().fromJson(json, Track::class.java)

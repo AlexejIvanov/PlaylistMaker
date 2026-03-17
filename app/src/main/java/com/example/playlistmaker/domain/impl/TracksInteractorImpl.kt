@@ -2,10 +2,12 @@ package com.example.playlistmaker.domain.impl
 
 import com.example.playlistmaker.domain.api.TracksInteractor
 import com.example.playlistmaker.domain.api.TracksRepository
-import java.util.concurrent.Executors
+import java.util.concurrent.ExecutorService
 
-class TracksInteractorImpl(private val repository: TracksRepository) : TracksInteractor {
-    private val executor = Executors.newCachedThreadPool()
+class TracksInteractorImpl(
+    private val repository: TracksRepository,
+    private val executor: ExecutorService
+) : TracksInteractor {
 
     override fun searchTracks(exception: String, consumer: TracksInteractor.TrackConsumer) {
         executor.execute {
