@@ -1,8 +1,6 @@
-package com.example.playlistmaker.presentation
+package com.example.playlistmaker.presentation.player
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -13,11 +11,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.domain.api.PlayerInteractor
 import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.di.ViewModelFactory
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -26,8 +25,9 @@ class PlayerActivity : AppCompatActivity() {
 
     companion object {
         const val TRACK_KEY = "TRACK_KEY"
-        private const val UPDATE_DELAY = 300L
     }
+
+    private lateinit var viewModel: PlayerViewModel
 
     // UI
     private lateinit var backButton: ImageView
@@ -42,52 +42,69 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var playButton: ImageView
     private lateinit var pauseButton: ImageView
     private lateinit var currentTime: TextView
-
-    // Группы
     private lateinit var collectionGroup: Group
-
-    // Логика
-    private lateinit var playerInteractor: PlayerInteractor
-    private var mainThreadHandler: Handler? = null
-    private var timerRunnable: Runnable? = null
-
-    // Состояние
-    private var isPlaying = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_player)
+
         initViews()
         setupWindowInsets()
-        playerInteractor = Creator.providePlayerInteractor()
-        mainThreadHandler = Handler(Looper.getMainLooper())
 
+        // Создаем ViewModel через фабрику
+        val factory = ViewModelFactory(this)
+        viewModel = ViewModelProvider(this, factory)[PlayerViewModel::class.java]
 
         val json = intent.getStringExtra(TRACK_KEY)
         val track = Gson().fromJson(json, Track::class.java)
 
         if (track != null) {
             bindTrackData(track)
-            preparePlayer(track.previewUrl)
+            if (savedInstanceState == null) {
+                viewModel.preparePlayer(track.previewUrl)
+            }
         } else {
             finish()
         }
 
+        // Подписываемся на состояния плеера
+        viewModel.state.observe(this) { state ->
+            when (state) {
+                PlayerState.Default -> {
+                    playButton.isEnabled = false
+                    playButton.isVisible = true
+                    pauseButton.isVisible = false
+                }
+                PlayerState.Prepared -> {
+                    playButton.isEnabled = true
+                    playButton.isVisible = true
+                    pauseButton.isVisible = false
+                }
+                PlayerState.Playing -> {
+                    playButton.isVisible = false
+                    pauseButton.isVisible = true
+                }
+                PlayerState.Paused -> {
+                    playButton.isVisible = true
+                    pauseButton.isVisible = false
+                }
+            }
+        }
+
+        // Подписываемся на таймер
+        viewModel.timer.observe(this) { time ->
+            currentTime.text = time
+        }
+
         backButton.setOnClickListener { finish() }
-        playButton.setOnClickListener { startPlayer() }
-        pauseButton.setOnClickListener { pausePlayer() }
+        playButton.setOnClickListener { viewModel.play() }
+        pauseButton.setOnClickListener { viewModel.pause() }
     }
 
     override fun onPause() {
         super.onPause()
-        pausePlayer()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        playerInteractor.releasePlayer()
-        timerRunnable?.let { mainThreadHandler?.removeCallbacks(it) }
+        viewModel.pause()
     }
 
     private fun initViews() {
@@ -104,14 +121,12 @@ class PlayerActivity : AppCompatActivity() {
         pauseButton = findViewById(R.id.pause_button)
         currentTime = findViewById(R.id.playback_progress)
         collectionGroup = findViewById(R.id.collection_group)
-        currentTime.text = "00:00"
     }
 
     private fun bindTrackData(track: Track) {
         trackName.text = track.trackName
         artistName.text = track.artistName
-        trackTime.text =
-            SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
+        trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
 
         if (track.collectionName.isNullOrEmpty()) {
             collectionGroup.isVisible = false
@@ -131,58 +146,8 @@ class PlayerActivity : AppCompatActivity() {
             .into(coverImage)
     }
 
-    private fun preparePlayer(url: String) {
-        playButton.isEnabled = false
-
-        playerInteractor.preparePlayer(url, object : PlayerInteractor.PlayerPreparedListener {
-            override fun onPrepared() {
-                playButton.isEnabled = true
-                playButton.isVisible = true
-                pauseButton.isVisible = false
-            }
-        })
-
-        playerInteractor.setOnCompletionListener {
-            isPlaying = false
-            playButton.isVisible = true
-            pauseButton.isVisible = false
-            currentTime.text = "00:00"
-            timerRunnable?.let { mainThreadHandler?.removeCallbacks(it) }
-        }
-    }
-
-    private fun startPlayer() {
-        playerInteractor.startPlayer()
-        isPlaying = true
-        playButton.isVisible = false
-        pauseButton.isVisible = true
-        startTimer()
-    }
-
-    private fun pausePlayer() {
-        playerInteractor.pausePlayer()
-        isPlaying = false
-        playButton.isVisible = true
-        pauseButton.isVisible = false
-        timerRunnable?.let { mainThreadHandler?.removeCallbacks(it) }
-    }
-
-    private fun startTimer() {
-        timerRunnable = object : Runnable {
-            override fun run() {
-                if (isPlaying) {
-                    val currentPosition = playerInteractor.getCurrentPosition()
-                    currentTime.text =
-                        SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition)
-                    mainThreadHandler?.postDelayed(this, UPDATE_DELAY)
-                }
-            }
-        }
-        mainThreadHandler?.post(timerRunnable!!)
-    }
-
     private fun setupWindowInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById<android.view.View>(R.id.player)) { view, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById<View>(R.id.player)) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.updatePadding(
                 systemBars.left,
