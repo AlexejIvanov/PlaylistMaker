@@ -18,10 +18,8 @@ import java.util.concurrent.Executors
 
 val interactorModule = module {
     single<ExecutorService> { Executors.newCachedThreadPool() }
-
-    // Явно указываем типы
     factory<PlayerInteractor> { PlayerInteractorImpl(repository = get<PlayerRepository>()) }
-    single<SearchHistoryInteractor> { SearchHistoryInteractorImpl(repository = get<SearchHistoryRepository>()) }
-    single<SettingsInteractor> { SettingsInteractorImpl(repository = get<SettingRepository>()) }
-    single<TracksInteractor> { TracksInteractorImpl(repository = get<TracksRepository>(), executor = get<ExecutorService>()) }
+    factory<SearchHistoryInteractor> { SearchHistoryInteractorImpl(repository = get<SearchHistoryRepository>()) }
+    factory<SettingsInteractor> { SettingsInteractorImpl(repository = get<SettingRepository>()) }
+    factory<TracksInteractor> { TracksInteractorImpl(repository = get<TracksRepository>(), executor = get<ExecutorService>()) }
 }

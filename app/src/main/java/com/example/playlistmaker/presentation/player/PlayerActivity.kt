@@ -1,5 +1,6 @@
 package com.example.playlistmaker.presentation.player
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -15,7 +16,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.models.Track
-import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -51,8 +51,12 @@ class PlayerActivity : AppCompatActivity() {
         initViews()
         setupWindowInsets()
 
-        val json = intent.getStringExtra(TRACK_KEY)
-        val track = Gson().fromJson(json, Track::class.java)
+        val track = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(TRACK_KEY, Track::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra(TRACK_KEY)
+        }
 
         if (track != null) {
             bindTrackData(track)

@@ -17,9 +17,9 @@ import org.koin.dsl.module
 val repositoryModule = module {
     factory { MediaPlayer() }
 
-    // Явно указываем get<MediaPlayer>() и т.д.
+
     factory<PlayerRepository> { PlayerRepositoryImpl(mediaPlayer = get<MediaPlayer>()) }
-    single<SearchHistoryRepository> { SearchHistoryRepositoryImpl(sharedPreferences = get<SharedPreferences>(), gson = get<Gson>()) }
-    single<SettingRepository> { SettingsRepositoryImpl(sharedPreferences = get<SharedPreferences>()) }
-    single<TracksRepository> { TracksRepositoryImpl(networkClient = get<NetworkClient>()) }
+    factory<SearchHistoryRepository> { SearchHistoryRepositoryImpl(sharedPreferences = get<SharedPreferences>(), gson = get<Gson>()) }
+    factory<SettingRepository> { SettingsRepositoryImpl(sharedPreferences = get<SharedPreferences>()) }
+    factory<TracksRepository> { TracksRepositoryImpl(networkClient = get<NetworkClient>()) }
 }

@@ -17,16 +17,18 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.ViewModelProvider
+import org.koin.android.ext.android.inject
+import com.google.gson.Gson
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.presentation.player.PlayerActivity
-import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
+
+    private val gson: Gson by inject()
 
     private val viewModel: SearchViewModel by viewModel()
 
@@ -145,7 +147,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun openPlayer(track: Track) {
         val intent = Intent(this, PlayerActivity::class.java).apply {
-            putExtra(PlayerActivity.TRACK_KEY, Gson().toJson(track))
+            putExtra(PlayerActivity.TRACK_KEY, track)
         }
         startActivity(intent)
     }

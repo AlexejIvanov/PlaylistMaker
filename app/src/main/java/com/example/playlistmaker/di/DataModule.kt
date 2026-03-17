@@ -12,6 +12,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 val dataModule = module {
+    single { Gson() }
     single<ITunesApiService> {
         Retrofit.Builder()
             .baseUrl("https://itunes.apple.com")
@@ -23,8 +24,6 @@ val dataModule = module {
     single<SharedPreferences> {
         androidContext().getSharedPreferences("playlist_maker_preferences", Context.MODE_PRIVATE)
     }
-
-    factory { Gson() }
 
     single<NetworkClient> {
         RetrofitNetworkClient(context = androidContext(), iTunesService = get())
