@@ -11,14 +11,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
-import com.example.playlistmaker.di.ViewModelFactory
 import com.google.android.material.switchmaterial.SwitchMaterial
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel: SettingsViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,10 +25,6 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
         setupWindowInsets()
-
-        // Инициализация ViewModel
-        val factory = ViewModelFactory(this)
-        viewModel = ViewModelProvider(this, factory)[SettingsViewModel::class.java]
 
         val backButton = findViewById<ImageView>(R.id.back_button)
         val themeSwitch = findViewById<SwitchMaterial>(R.id.theme_switch)

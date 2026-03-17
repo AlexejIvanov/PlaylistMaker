@@ -1,7 +1,6 @@
 package com.example.playlistmaker.presentation.search
 
 import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,15 +10,19 @@ import com.example.playlistmaker.domain.models.Track
 
 class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
-    private val searchHistoryInteractor: SearchHistoryInteractor
+    private val searchHistoryInteractor: SearchHistoryInteractor,
+    private val handler: Handler
 ) : ViewModel() {
+
+    companion object {
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+    }
 
     private val _state = MutableLiveData<SearchScreenState>()
     val state: LiveData<SearchScreenState> get() = _state
 
-    private val handler = Handler(Looper.getMainLooper())
     private var searchRunnable: Runnable? = null
-
     private var isClickAllowed = true
 
     fun searchDebounce(query: String) {
@@ -31,7 +34,7 @@ class SearchViewModel(
 
         searchRunnable?.let { handler.removeCallbacks(it) }
         searchRunnable = Runnable { search(query) }
-        handler.postDelayed(searchRunnable!!, 2000L)
+        handler.postDelayed(searchRunnable!!, SEARCH_DEBOUNCE_DELAY)
     }
 
     fun search(query: String) {
@@ -66,7 +69,7 @@ class SearchViewModel(
     fun addTrackToHistory(track: Track) {
         searchHistoryInteractor.addTrackToHistory(track)
         if (_state.value is SearchScreenState.History) {
-            showHistory() // Обновляем список истории на экране
+            showHistory()
         }
     }
 
@@ -79,7 +82,7 @@ class SearchViewModel(
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, 1000L)
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
         }
         return current
     }

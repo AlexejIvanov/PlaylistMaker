@@ -1,7 +1,6 @@
 package com.example.playlistmaker.presentation.player
 
 import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,21 +8,28 @@ import com.example.playlistmaker.domain.api.PlayerInteractor
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class PlayerViewModel(private val playerInteractor: PlayerInteractor) : ViewModel() {
+class PlayerViewModel(
+    private val playerInteractor: PlayerInteractor,
+    private val handler: Handler
+) : ViewModel() {
+
+    companion object {
+        private const val UPDATE_DELAY_MILLIS = 300L
+        private const val DEFAULT_TIMER_VALUE = "00:00"
+    }
 
     private val _state = MutableLiveData<PlayerState>(PlayerState.Default)
     val state: LiveData<PlayerState> get() = _state
 
-    private val _timer = MutableLiveData<String>("00:00")
+    private val _timer = MutableLiveData<String>(DEFAULT_TIMER_VALUE)
     val timer: LiveData<String> get() = _timer
 
-    private val handler = Handler(Looper.getMainLooper())
     private val timerRunnable = object : Runnable {
         override fun run() {
             if (_state.value == PlayerState.Playing) {
                 val currentPosition = playerInteractor.getCurrentPosition()
                 _timer.value = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition)
-                handler.postDelayed(this, 300L)
+                handler.postDelayed(this, UPDATE_DELAY_MILLIS) // Используем константу
             }
         }
     }
@@ -36,7 +42,7 @@ class PlayerViewModel(private val playerInteractor: PlayerInteractor) : ViewMode
         })
         playerInteractor.setOnCompletionListener {
             _state.value = PlayerState.Prepared
-            _timer.value = "00:00"
+            _timer.value = DEFAULT_TIMER_VALUE // Используем константу
             handler.removeCallbacks(timerRunnable)
         }
     }
