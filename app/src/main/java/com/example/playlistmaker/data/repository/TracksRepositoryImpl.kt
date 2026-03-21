@@ -6,20 +6,26 @@ import com.example.playlistmaker.data.network.NetworkClient
 import com.example.playlistmaker.domain.api.TracksRepository
 import com.example.playlistmaker.domain.models.Track
 
+/**
+ * Реализация репозитория для поиска треков.
+ * Преобразует сетевые данные (DTO) в доменные модели (Track).
+ */
 class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
 
     override fun searchTrack(expression: String, callback: (List<Track>?, String?) -> Unit) {
+        // Отправка запроса через сетевой клиент
         val response = networkClient.doRequest(TrackSearchRequest(expression))
 
         when (response.resultCode) {
-            -1 -> {
+            -1 -> { // Нет подключения к сети
                 callback(null, "Проверьте подключение к интернету")
             }
 
-            200 -> {
+            200 -> { // Успешный ответ от сервера
                 val iTunesResponse = response as ITunesResponse
 
                 if (iTunesResponse.results.isNotEmpty()) {
+                    // Маппинг: превращаем список TrackDto в список Track
                     val tracks = iTunesResponse.results.map { dto ->
                         Track(
                             trackId = dto.trackId,
@@ -34,13 +40,13 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
                             previewUrl = dto.previewUrl ?: ""
                         )
                     }
-                    callback(tracks, null)
+                    callback(tracks, null) // Возвращаем найденные треки
                 } else {
-                    callback(emptyList(), null)
+                    callback(emptyList(), null) // Треки не найдены (пустой список)
                 }
             }
 
-            else -> {
+            else -> { // Ошибки 400, 500 и прочие
                 callback(null, "Ошибка сервера")
             }
         }

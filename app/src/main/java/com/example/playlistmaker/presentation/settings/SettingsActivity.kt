@@ -15,8 +15,12 @@ import com.example.playlistmaker.R
 import com.google.android.material.switchmaterial.SwitchMaterial
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+/**
+ * Экран настроек: управление темой и взаимодействие с внешними сервисами (почта, браузер, шаринг).
+ */
 class SettingsActivity : AppCompatActivity() {
 
+    // Инъекция ViewModel для работы с бизнес-логикой настроек
     private val viewModel: SettingsViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,17 +36,19 @@ class SettingsActivity : AppCompatActivity() {
         val supportButton = findViewById<TextView>(R.id.support_button)
         val agreementButton = findViewById<TextView>(R.id.user_agreement_button)
 
-        // Подписываемся на тему
+        // Подписка на состояние темы для синхронизации переключателя (Switch)
         viewModel.themeState.observe(this) { isDark ->
             themeSwitch.isChecked = isDark
         }
 
+        // Слушатель переключения темы пользователем
         themeSwitch.setOnCheckedChangeListener { _, checked ->
             viewModel.switchTheme(checked)
         }
 
         backButton.setOnClickListener { finish() }
 
+        // Реализация функции "Поделиться приложением" через Intent.ACTION_SEND
         shareButton.setOnClickListener {
             val shareText = getString(R.string.share_link)
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -52,6 +58,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(shareIntent, null))
         }
 
+        // Реализация функции "Написать в поддержку" через Intent.ACTION_SENDTO (почта)
         supportButton.setOnClickListener {
             val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("mailto:")
@@ -62,6 +69,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(emailIntent)
         }
 
+        // Открытие Пользовательского соглашения во внешнем браузере
         agreementButton.setOnClickListener {
             val url = getString(R.string.link_to_the_user_agreement)
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
@@ -69,6 +77,9 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Корректная обработка системных отступов (Insets) для Edge-to-Edge режима.
+     */
     private fun setupWindowInsets() {
         val density = resources.displayMetrics.density
         val sidePadding = (16 * density).toInt()

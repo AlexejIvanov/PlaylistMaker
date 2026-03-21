@@ -20,15 +20,19 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+/**
+ * Экран аудиоплеера для прослушивания выбранного трека.
+ */
 class PlayerActivity : AppCompatActivity() {
 
     companion object {
-        const val TRACK_KEY = "TRACK_KEY"
+        const val TRACK_KEY = "TRACK_KEY" // Ключ для передачи объекта Track через Intent
     }
 
+    // Инъекция ViewModel через Koin
     private val viewModel: PlayerViewModel by viewModel()
 
-    // UI
+    // Элементы UI
     private lateinit var backButton: ImageView
     private lateinit var coverImage: ImageView
     private lateinit var trackName: TextView
@@ -51,6 +55,7 @@ class PlayerActivity : AppCompatActivity() {
         initViews()
         setupWindowInsets()
 
+        // Безопасное получение объекта Track с учетом версии Android (API 33+)
         val track = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(TRACK_KEY, Track::class.java)
         } else {
@@ -60,14 +65,15 @@ class PlayerActivity : AppCompatActivity() {
 
         if (track != null) {
             bindTrackData(track)
+            // Готовим плеер только при первом создании Activity
             if (savedInstanceState == null) {
                 viewModel.preparePlayer(track.previewUrl)
             }
         } else {
-            finish()
+            finish() // Закрываем экран, если данных нет
         }
 
-        // Подписываемся на состояния плеера
+        // Подписка на изменение состояния плеера (кнопки, доступность)
         viewModel.state.observe(this) { state ->
             when (state) {
                 PlayerState.Default -> {
@@ -91,7 +97,7 @@ class PlayerActivity : AppCompatActivity() {
             }
         }
 
-        // Подписываемся на таймер
+        // Подписка на обновление текущего времени воспроизведения (таймер)
         viewModel.timer.observe(this) { time ->
             currentTime.text = time
         }
@@ -101,6 +107,7 @@ class PlayerActivity : AppCompatActivity() {
         pauseButton.setOnClickListener { viewModel.pause() }
     }
 
+    // Ставим плеер на паузу, если пользователь свернул приложение
     override fun onPause() {
         super.onPause()
         viewModel.pause()
@@ -122,11 +129,15 @@ class PlayerActivity : AppCompatActivity() {
         collectionGroup = findViewById(R.id.collection_group)
     }
 
+    /**
+     * Заполнение UI данными трека.
+     */
     private fun bindTrackData(track: Track) {
         trackName.text = track.trackName
         artistName.text = track.artistName
         trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
 
+        // Скрываем поле "Альбом", если данные отсутствуют
         if (track.collectionName.isNullOrEmpty()) {
             collectionGroup.isVisible = false
         } else {
@@ -134,10 +145,11 @@ class PlayerActivity : AppCompatActivity() {
             collectionName.text = track.collectionName
         }
 
-        releaseDate.text = track.releaseDate?.take(4) ?: ""
+        releaseDate.text = track.releaseDate?.take(4) ?: "" // Берем только год
         primaryGenreName.text = track.primaryGenreName
         country.text = track.country
 
+        // Загрузка большой обложки с закруглением углов
         Glide.with(this)
             .load(track.getCoverArtwork())
             .placeholder(R.drawable.ic_placeholder_image)

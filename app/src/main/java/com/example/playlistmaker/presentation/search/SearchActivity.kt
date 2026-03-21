@@ -26,28 +26,32 @@ import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.presentation.player.PlayerActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+/**
+ * Экран поиска треков: отображает результаты поиска, историю запросов и ошибки сети.
+ */
 class SearchActivity : AppCompatActivity() {
 
-    private val gson: Gson by inject()
+    private val gson: Gson by inject() // Инъекция Gson (через Koin)
+    private val viewModel: SearchViewModel by viewModel() // Инъекция ViewModel (через Koin)
 
-    private val viewModel: SearchViewModel by viewModel()
-
-    // UI элементы
+    // Элементы управления и ввода
     private lateinit var searchEditText: EditText
     private lateinit var clearButton: ImageView
     private lateinit var backButton: ImageView
     private lateinit var refreshButton: Button
     private lateinit var clearHistoryButton: Button
 
+    // Списки (RecyclerView)
     private lateinit var recyclerViewTracks: RecyclerView
     private lateinit var recyclerViewHistory: RecyclerView
 
+    // Плейсхолдеры и состояния
     private lateinit var placeholderNothingFound: LinearLayout
     private lateinit var placeholderNetworkError: LinearLayout
     private lateinit var historyLayout: LinearLayout
     private lateinit var progressBar: ProgressBar
 
-    // Адаптеры
+    // Списки данных и адаптеры
     private val trackList = mutableListOf<Track>()
     private val historyList = mutableListOf<Track>()
     private lateinit var trackAdapter: TrackAdapter
@@ -58,20 +62,22 @@ class SearchActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_search)
 
-
         initViews()
         setupAdapters()
         setupListeners()
         setupWindowInsets()
 
-        // Подписываемся на стейт экрана
+        // Подписка на LiveData состояния экрана из ViewModel
         viewModel.state.observe(this) { state ->
             renderState(state)
         }
 
-        searchEditText.requestFocus()
+        searchEditText.requestFocus() // Автофокус на поле ввода при открытии
     }
 
+    /**
+     * Управляет видимостью элементов экрана в зависимости от текущего состояния (Loading, Content, Error и т.д.)
+     */
     private fun renderState(state: SearchScreenState) {
         progressBar.isVisible = state is SearchScreenState.Loading
         recyclerViewTracks.isVisible = state is SearchScreenState.Content
@@ -90,9 +96,7 @@ class SearchActivity : AppCompatActivity() {
                 historyList.addAll(state.tracks)
                 historyAdapter.notifyDataSetChanged()
             }
-            else -> {
-                // В состояниях Error/Empty/Loading списки скрыты, данные обновлять не нужно
-            }
+            else -> {}
         }
     }
 
@@ -102,32 +106,38 @@ class SearchActivity : AppCompatActivity() {
         clearButton.setOnClickListener {
             searchEditText.setText("")
             hideKeyboard()
-            viewModel.showHistory()
+            viewModel.showHistory() // При очистке поля показываем историю
         }
 
         refreshButton.setOnClickListener {
-            viewModel.search(searchEditText.text.toString())
+            viewModel.search(searchEditText.text.toString()) // Повторный запрос при ошибке
         }
 
         clearHistoryButton.setOnClickListener {
             viewModel.clearHistory()
         }
 
+        // Показ истории, если поле ввода пустое и получило фокус
         searchEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && searchEditText.text.isEmpty()) {
                 viewModel.showHistory()
             }
         }
 
+        // Слушатель изменения текста с вызовом Debounce-поиска
         searchEditText.doOnTextChanged { text, _, _, _ ->
             clearButton.isVisible = !text.isNullOrEmpty()
             viewModel.searchDebounce(text?.toString() ?: "")
         }
     }
 
+    /**
+     * Инициализация адаптеров для основного поиска и для истории.
+     */
     private fun setupAdapters() {
+        // Адаптер результатов поиска
         trackAdapter = TrackAdapter(trackList) { track ->
-            if (viewModel.clickDebounce()) {
+            if (viewModel.clickDebounce()) { // Защита от множественных кликов
                 viewModel.addTrackToHistory(track)
                 openPlayer(track)
             }
@@ -135,9 +145,10 @@ class SearchActivity : AppCompatActivity() {
         recyclerViewTracks.layoutManager = LinearLayoutManager(this)
         recyclerViewTracks.adapter = trackAdapter
 
+        // Адаптер истории поиска
         historyAdapter = TrackAdapter(historyList) { track ->
             if (viewModel.clickDebounce()) {
-                viewModel.addTrackToHistory(track)
+                viewModel.addTrackToHistory(track) // Обновляем позицию в истории
                 openPlayer(track)
             }
         }
@@ -145,6 +156,9 @@ class SearchActivity : AppCompatActivity() {
         recyclerViewHistory.adapter = historyAdapter
     }
 
+    /**
+     * Переход на экран плеера с передачей объекта трека.
+     */
     private fun openPlayer(track: Track) {
         val intent = Intent(this, PlayerActivity::class.java).apply {
             putExtra(PlayerActivity.TRACK_KEY, track)
@@ -152,6 +166,9 @@ class SearchActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    /**
+     * Скрытие мягкой клавиатуры.
+     */
     private fun hideKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         imm?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
@@ -174,6 +191,9 @@ class SearchActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progress_bar)
     }
 
+    /**
+     * Настройка отступов для корректного отображения за системными панелями.
+     */
     private fun setupWindowInsets() {
         val density = resources.displayMetrics.density
         val sidePadding = (16 * density).toInt()

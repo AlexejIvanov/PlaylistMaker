@@ -1,6 +1,10 @@
 package com.example.playlistmaker.data.dto
 
+/**
+ * DTO (Data Transfer Object) для ответа от iTunes Search API.
+ * Наследуется от Response для хранения кода результата (resultCode).
+ */
 data class ITunesResponse(
-    val resultCount: Int,
-    val results: List<TrackDto>
+    val resultCount: Int,        // Общее количество найденных треков в ответе
+    val results: List<TrackDto>   // Список объектов с данными о каждом треке
 ) : Response()

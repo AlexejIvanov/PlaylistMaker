@@ -14,12 +14,25 @@ import com.example.playlistmaker.domain.api.TracksRepository
 import com.google.gson.Gson
 import org.koin.dsl.module
 
+/**
+ * Koin-модуль для предоставления реализаций репозиториев (Data Layer).
+ */
 val repositoryModule = module {
+
+    // Создает новый экземпляр системного медиаплеера при каждом запросе
     factory { MediaPlayer() }
 
-
+    // Репозиторий для управления состоянием и действиями плеера
     factory<PlayerRepository> { PlayerRepositoryImpl(mediaPlayer = get<MediaPlayer>()) }
-    factory<SearchHistoryRepository> { SearchHistoryRepositoryImpl(sharedPreferences = get<SharedPreferences>(), gson = get<Gson>()) }
+
+    // Репозиторий для сохранения и получения истории поиска из SharedPreferences
+    factory<SearchHistoryRepository> {
+        SearchHistoryRepositoryImpl(sharedPreferences = get<SharedPreferences>(), gson = get<Gson>())
+    }
+
+    // Репозиторий для управления настройками темы оформления
     factory<SettingRepository> { SettingsRepositoryImpl(sharedPreferences = get<SharedPreferences>()) }
+
+    // Репозиторий для выполнения поиска треков через сетевой клиент
     factory<TracksRepository> { TracksRepositoryImpl(networkClient = get<NetworkClient>()) }
 }

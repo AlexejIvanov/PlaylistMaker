@@ -13,44 +13,50 @@ import com.example.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-// Адаптер для связывания данных (списка треков) с RecyclerView
+/**
+ * Адаптер для отображения списка треков в RecyclerView.
+ * Принимает список данных и лямбда-функцию для обработки клика.
+ */
 class TrackAdapter(
-    private val tracks: List<Track>, private val clickListener: (Track) -> Unit
+    private val tracks: List<Track>,
+    private val clickListener: (Track) -> Unit
 ) : RecyclerView.Adapter<TrackAdapter.TrackViewHolder>() {
 
-    // ViewHolder хранит ссылки на View-элементы одного элемента списка
+    /**
+     * ViewHolder: хранит ссылки на UI-элементы одного элемента списка для переиспользования.
+     */
     class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val coverImage: ImageView = itemView.findViewById(R.id.CoverTack)
         val trackName: TextView = itemView.findViewById(R.id.TrackName)
         val artistName: TextView = itemView.findViewById(R.id.ArtistName)
         val trackTime: TextView = itemView.findViewById(R.id.TrackTime)
 
-        // Метод для заполнения View данными конкретного трека
+        /**
+         * Привязывает данные модели Track к конкретным View.
+         */
         fun bind(track: Track) {
             trackName.text = track.trackName
             artistName.text = track.artistName
-            trackTime.text =
-                SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
+            // Форматирование времени трека из миллисекунд в "00:00"
+            trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
 
-            // Загрузка изображения через Glide с обработкой (CenterCrop и закругление углов)
-            Glide.with(itemView.context).load(track.artworkUrl100)
-                .placeholder(R.drawable.ic_placeholder_image).centerCrop().transform(
-                    RoundedCorners(
-                        itemView.resources.getDimensionPixelSize(
-                            R.dimen.track_cover_corner_radius
-                        )
-                    )
-                ).into(coverImage)
+            // Загрузка обложки: используем Glide для обрезки (CenterCrop) и скругления углов
+            Glide.with(itemView.context)
+                .load(track.artworkUrl100)
+                .placeholder(R.drawable.ic_placeholder_image)
+                .centerCrop()
+                .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.track_cover_corner_radius)))
+                .into(coverImage)
         }
     }
 
-    // Создание нового ViewHolder (раздувание макета track_layout)
+    // Создание нового объекта ViewHolder на основе XML-макета элемента
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.track_layout, parent, false)
         return TrackViewHolder(view)
     }
 
-    // Привязка данных к ViewHolder в зависимости от позиции в списке
+    // Наполнение View данными из списка по позиции и установка слушателя клика
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(tracks[position])
         holder.itemView.setOnClickListener {
@@ -58,6 +64,6 @@ class TrackAdapter(
         }
     }
 
-    // Возвращает количество элементов в списке
+    // Возвращает общее количество элементов в списке
     override fun getItemCount(): Int = tracks.size
 }

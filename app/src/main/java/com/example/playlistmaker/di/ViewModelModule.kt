@@ -12,9 +12,15 @@ import com.example.playlistmaker.presentation.settings.SettingsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
+/**
+ * Koin-модуль для предоставления ViewModels (Presentation Layer).
+ */
 val viewModelModule = module {
+
+    // Создает Handler, привязанный к главному (UI) потоку для отложенных задач
     factory { Handler(Looper.getMainLooper()) }
 
+    // ViewModel для экрана аудиоплеера: управляет состоянием проигрывания и таймером
     viewModel {
         PlayerViewModel(
             playerInteractor = get<PlayerInteractor>(),
@@ -22,6 +28,7 @@ val viewModelModule = module {
         )
     }
 
+    // ViewModel для экрана поиска: отвечает за поисковые запросы, историю и Debounce
     viewModel {
         SearchViewModel(
             tracksInteractor = get<TracksInteractor>(),
@@ -30,6 +37,7 @@ val viewModelModule = module {
         )
     }
 
+    // ViewModel для экрана настроек: управление темой и логикой кнопок "Поделиться"
     viewModel {
         SettingsViewModel(
             settingsInteractor = get<SettingsInteractor>()

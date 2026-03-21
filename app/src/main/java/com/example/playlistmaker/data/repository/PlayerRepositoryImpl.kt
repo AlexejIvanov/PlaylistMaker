@@ -3,21 +3,31 @@ package com.example.playlistmaker.data.repository
 import android.media.MediaPlayer
 import com.example.playlistmaker.domain.api.PlayerRepository
 
+/**
+ * Реализация репозитория для управления аудио-плеером через MediaPlayer.
+ */
 class PlayerRepositoryImpl(
     private val mediaPlayer: MediaPlayer
 ) : PlayerRepository {
 
+    // Устанавливает источник аудио и асинхронно готовит плеер к работе
     override fun prepare(url: String, onPrepared: () -> Unit) {
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener { onPrepared() }
+        mediaPlayer.setOnPreparedListener { onPrepared() } // Вызов колбэка при готовности
     }
 
-    override fun start() = mediaPlayer.start()
-    override fun pause() = mediaPlayer.pause()
-    override fun release() = mediaPlayer.release()
-    override fun getCurrentPosition(): Int = mediaPlayer.currentPosition
-    override fun isPlaying(): Boolean = mediaPlayer.isPlaying
+    override fun start() = mediaPlayer.start() // Начать или продолжить воспроизведение
+
+    override fun pause() = mediaPlayer.pause() // Поставить на паузу
+
+    override fun release() = mediaPlayer.release() // Полное освобождение ресурсов плеера
+
+    override fun getCurrentPosition(): Int = mediaPlayer.currentPosition // Текущая позиция (в мс)
+
+    override fun isPlaying(): Boolean = mediaPlayer.isPlaying // Проверка состояния воспроизведения
+
+    // Установка слушателя для события завершения трека
     override fun setOnCompletionListener(listener: () -> Unit) {
         mediaPlayer.setOnCompletionListener { listener() }
     }

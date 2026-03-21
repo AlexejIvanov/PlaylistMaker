@@ -16,10 +16,25 @@ import org.koin.dsl.module
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
+/**
+ * Koin-модуль для предоставления интеракторов (бизнес-логики) приложения.
+ */
 val interactorModule = module {
+
+    // Пул потоков для выполнения фоновых задач (например, сетевых запросов)
     single<ExecutorService> { Executors.newCachedThreadPool() }
+
+    // Интерактор для управления плеером (создается новый экземпляр при каждом запросе)
     factory<PlayerInteractor> { PlayerInteractorImpl(repository = get<PlayerRepository>()) }
+
+    // Интерактор для работы с историей поиска треков
     factory<SearchHistoryInteractor> { SearchHistoryInteractorImpl(repository = get<SearchHistoryRepository>()) }
+
+    // Интерактор для управления настройками (например, темой оформления)
     factory<SettingsInteractor> { SettingsInteractorImpl(repository = get<SettingRepository>()) }
-    factory<TracksInteractor> { TracksInteractorImpl(repository = get<TracksRepository>(), executor = get<ExecutorService>()) }
+
+    // Интерактор для поиска треков, использующий ExecutorService для асинхронности
+    factory<TracksInteractor> {
+        TracksInteractorImpl(repository = get<TracksRepository>(), executor = get<ExecutorService>())
+    }
 }
