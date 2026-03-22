@@ -11,7 +11,11 @@ class PlayerInteractorImpl(private val repository: PlayerRepository) : PlayerInt
 
     // Подготовка плеера: передает URL в репозиторий и уведомляет слушателя о готовности
     override fun preparePlayer(url: String, listener: PlayerInteractor.PlayerPreparedListener) {
-        repository.prepare(url) { listener.onPrepared() }
+        repository.prepare(
+            url = url,
+            onPrepared = {listener.onPrepared()},
+            onError = {listener.onError()}
+        )
     }
 
     override fun startPlayer() = repository.start() // Запуск проигрывания

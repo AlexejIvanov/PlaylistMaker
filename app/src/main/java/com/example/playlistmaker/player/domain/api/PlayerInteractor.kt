@@ -20,5 +20,6 @@ interface PlayerInteractor {
     // Слушатель для уведомления о том, что плеер успешно загрузил данные
     interface PlayerPreparedListener {
         fun onPrepared()
+        fun onError()
     }
 }
