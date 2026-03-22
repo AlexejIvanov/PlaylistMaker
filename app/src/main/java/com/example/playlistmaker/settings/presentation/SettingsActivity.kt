@@ -3,6 +3,7 @@ package com.example.playlistmaker.settings.presentation
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -81,18 +82,23 @@ class SettingsActivity : AppCompatActivity() {
      * Корректная обработка системных отступов (Insets) для Edge-to-Edge режима.
      */
     private fun setupWindowInsets() {
-        val density = resources.displayMetrics.density
-        val sidePadding = (16 * density).toInt()
+        val rootElement = findViewById<View>(R.id.settings)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById<View>(R.id.settings)) { view, insets ->
+        val initialPaddingStart = rootElement.paddingStart
+        val initialPaddingEnd = rootElement.paddingEnd
+
+        ViewCompat.setOnApplyWindowInsetsListener(rootElement) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+
             view.updatePadding(
-                sidePadding + systemBars.left,
-                systemBars.top,
-                sidePadding + systemBars.right,
-                systemBars.bottom
+                left = initialPaddingStart + systemBars.left,
+                top = systemBars.top,
+                right = initialPaddingEnd + systemBars.right,
+                bottom = systemBars.bottom
             )
             insets
         }
+        rootElement.requestApplyInsets()
     }
 }

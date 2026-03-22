@@ -46,6 +46,10 @@ class PlayerViewModel(
             override fun onPrepared() {
                 _state.value = PlayerState.Prepared
             }
+
+            override fun onError() {
+                _state.postValue(PlayerState.Default)
+            }
         })
         playerInteractor.setOnCompletionListener {
             _state.value = PlayerState.Prepared
