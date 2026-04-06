@@ -30,4 +30,11 @@
     <string name="ClearHistoryText">Очистить историю</string>
     <string name="YouSearchText">Вы искали</string>
 
+    <!-- Экран избранного и плейлистов -->
+    <string name="favorite_tracks">Избранные треки</string>
+    <string name="playlists">Плейлисты</string>
+    <string name="empty_favorites_message">Ваша медиатека пуста</string>
+    <string name="empty_playlists_message">Вы не создали ни одного плейлиста</string>
+    <string name="new_playlist">Новый плейлист</string>
+
 </resources>
