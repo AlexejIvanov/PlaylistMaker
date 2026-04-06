@@ -3,6 +3,7 @@ package com.example.playlistmaker.core
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.core.di.coreModule
+import com.example.playlistmaker.media.di.mediaModule
 import com.example.playlistmaker.player.di.playerModule
 import com.example.playlistmaker.search.di.searchModule
 import com.example.playlistmaker.settings.di.settingsModule
@@ -23,7 +24,7 @@ class App : Application() {
         // Инициализация Koin: передаем контекст приложения и регистрируем слои архитектуры
         startKoin {
             androidContext(this@App)
-            modules(coreModule, searchModule, playerModule, settingsModule)
+            modules(coreModule, searchModule, playerModule, settingsModule, mediaModule)
         }
 
         // Инжектим интерактор настроек, чтобы узнать, какую тему применить при запуске

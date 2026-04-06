@@ -8,37 +8,73 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.viewpager2.widget.ViewPager2
 import com.example.playlistmaker.R
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 
 /**
  * Экран "Медиатека".
  */
 class MediaActivity : AppCompatActivity() {
+
+
+    private lateinit var backButton: ImageView
+    private lateinit var viewPager: ViewPager2
+    private lateinit var tabLayout: TabLayout
+    private lateinit var tabMediator: TabLayoutMediator
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge() // Отрисовка контента за системными панелями (статус-бар и др.)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_media)
 
-        val density = resources.displayMetrics.density
-        val sidePadding = (16 * density).toInt()
 
-        // Настройка отступов для учета системных баров (Status Bar, Navigation Bar)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById<View>(R.id.media)) { view, insets ->
+        initViews()
+        setupWindowInsets()
+
+        backButton.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
+        // Настройка ViewPager2
+        viewPager.adapter = MediaViewPagerAdapter(supportFragmentManager, lifecycle)
+
+        // Настройка TabLayoutMediator
+        tabMediator = TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            when (position) {
+                0 -> tab.text = getString(R.string.favorite_tracks)
+                1 -> tab.text = getString(R.string.playlists)
+            }
+        }
+        tabMediator.attach()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (::tabMediator.isInitialized) {
+            tabMediator.detach()
+        }
+    }
+
+    private fun setupWindowInsets() {
+        val rootView = findViewById<View>(R.id.media)
+
+        ViewCompat.setOnApplyWindowInsetsListener(rootView) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.updatePadding(
-                sidePadding + systemBars.left,
-                systemBars.top,
-                sidePadding + systemBars.right,
-                systemBars.bottom
+                view.updatePadding(
+                left = systemBars.left,
+                top = systemBars.top,
+                right = systemBars.right,
+                bottom = systemBars.bottom
             )
             insets
         }
+    }
 
-        val backArrowImageView = findViewById<ImageView>(R.id.back_button)
-
-        // Обработка нажатия кнопки "Назад" через системный диспетчер
-        backArrowImageView.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
-        }
+    private fun initViews() {
+        backButton = findViewById(R.id.back_button)
+        viewPager = findViewById(R.id.view_pager)
+        tabLayout = findViewById(R.id.tab_layout)
     }
 }
