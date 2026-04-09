@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/player"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/player_scroll_view"
+    style="@style/backgroundColorActivity"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:paddingBottom="28dp">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/left_guideline"
@@ -25,52 +27,54 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.88" />
 
+        <!-- Кнопка назад: ID и стиль сохранены -->
         <ImageView
             android:id="@+id/back_button"
             style="@style/backIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="4dp"
             android:src="@drawable/ic_arrow_back_48x48"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBaseline_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/big_cover_track"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintDimensionRatio="1:1"
             android:layout_marginTop="24dp"
+            app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/left_guideline"
             app:layout_constraintTop_toBottomOf="@id/back_button"
             tools:src="@drawable/ic_placeholder_image" />
 
         <TextView
             android:id="@+id/track_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/big_cover_track"
-            app:layout_constraintStart_toStartOf="@id/left_guideline"
             android:layout_marginTop="24dp"
-            android:textSize="22sp"
-            android:textColor="?attr/colorOnSurface"
             android:fontFamily="@font/ys_display_medium"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="22sp"
+            app:layout_constraintEnd_toEndOf="@id/right_guideline"
+            app:layout_constraintStart_toStartOf="@id/left_guideline"
+            app:layout_constraintTop_toBottomOf="@id/big_cover_track"
             tools:text="Yesterday (Remastered 2009)" />
 
         <TextView
             android:id="@+id/artist_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/ys_display_medium"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="@dimen/text_size_14"
+            app:layout_constraintEnd_toEndOf="@id/right_guideline"
             app:layout_constraintStart_toStartOf="@id/left_guideline"
             app:layout_constraintTop_toBottomOf="@id/track_name"
-            android:layout_marginTop="12dp"
-            android:textSize="@dimen/text_size_14"
-            android:textColor="?attr/colorOnSurface"
-            android:fontFamily="@font/ys_display_medium"
             tools:text="The Beatles" />
-
-
 
         <ImageView
             android:id="@+id/to_playlist_button"
@@ -81,39 +85,38 @@
             app:layout_constraintStart_toStartOf="@id/left_guideline"
             app:layout_constraintTop_toTopOf="@id/button_anchor" />
 
+        <!-- Невидимый якорь для центрирования кнопок управления -->
         <ImageView
             android:id="@+id/button_anchor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_play_100x100"
-            app:layout_constraintTop_toBottomOf="@id/artist_name"
-            app:layout_constraintStart_toStartOf="@id/left_guideline"
-            app:layout_constraintEnd_toEndOf="@id/right_guideline"
             android:layout_marginTop="30dp"
-            android:visibility="invisible"/>
+            android:src="@drawable/ic_play_100x100"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="@id/right_guideline"
+            app:layout_constraintStart_toStartOf="@id/left_guideline"
+            app:layout_constraintTop_toBottomOf="@id/artist_name" />
 
         <ImageView
             android:id="@+id/play_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_play_100x100"
-            app:layout_constraintTop_toBottomOf="@id/artist_name"
-            app:layout_constraintStart_toStartOf="@id/left_guideline"
-            app:layout_constraintEnd_toEndOf="@id/right_guideline"
-            android:layout_marginTop="30dp"
-            android:visibility="visible"/>
+            app:layout_constraintBottom_toBottomOf="@id/button_anchor"
+            app:layout_constraintEnd_toEndOf="@id/button_anchor"
+            app:layout_constraintStart_toStartOf="@id/button_anchor"
+            app:layout_constraintTop_toTopOf="@id/button_anchor" />
 
         <ImageView
             android:id="@+id/pause_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_pausebutton_100x100"
-            app:layout_constraintTop_toBottomOf="@id/artist_name"
-            app:layout_constraintStart_toStartOf="@id/left_guideline"
-            app:layout_constraintEnd_toEndOf="@id/right_guideline"
-            android:layout_marginTop="30dp"
             android:visibility="gone"
-            />
+            app:layout_constraintBottom_toBottomOf="@id/button_anchor"
+            app:layout_constraintEnd_toEndOf="@id/button_anchor"
+            app:layout_constraintStart_toStartOf="@id/button_anchor"
+            app:layout_constraintTop_toTopOf="@id/button_anchor" />
 
         <ImageView
             android:id="@+id/to_favorite_button"
@@ -128,16 +131,16 @@
             android:id="@+id/playback_progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/button_anchor"
-            app:layout_constraintStart_toStartOf="@id/left_guideline"
-            app:layout_constraintEnd_toEndOf="@id/right_guideline"
             android:layout_marginTop="4dp"
+            android:fontFamily="@font/ys_display_medium"
             android:textColor="?attr/colorOnSurface"
             android:textSize="@dimen/text_size_14"
-            android:fontFamily="@font/ys_display_medium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button_anchor"
             tools:text="0:30" />
 
-
+        <!-- Информационный блок -->
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/labels_barrier"
             android:layout_width="wrap_content"
@@ -157,9 +160,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_end="16dp"/>
+            app:layout_constraintGuide_end="16dp" />
 
-        <!-- Длительность -->
         <TextView
             android:id="@+id/track_length"
             android:layout_width="wrap_content"
@@ -170,166 +172,127 @@
             android:textColor="@color/yp_textGray"
             android:textSize="13sp"
             app:layout_constraintStart_toStartOf="@+id/left_guideline_16dp"
-            app:layout_constraintTop_toBottomOf="@id/playback_progress"
-            tools:text="Длительность" />
+            app:layout_constraintTop_toBottomOf="@id/playback_progress" />
 
         <TextView
             android:id="@+id/track_length_data"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="@+id/right_guideline_16dp"
-            app:layout_constraintBaseline_toBaselineOf="@id/track_length"
-            app:layout_constraintStart_toEndOf="@id/labels_barrier"
-            android:gravity="end"
-            app:layout_constraintHorizontal_bias="1.0"
-            android:layout_marginTop="30dp"
             android:fontFamily="@font/ys_display_regular"
+            android:gravity="end"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="13dp"
+            android:textSize="13sp"
+            app:layout_constraintBaseline_toBaselineOf="@id/track_length"
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline_16dp"
+            app:layout_constraintStart_toEndOf="@id/labels_barrier"
             tools:text="5:35" />
-
-        <!-- Альбом -->
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/collection_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="visible"
             app:constraint_referenced_ids="collection_name,collection_name_data" />
 
         <TextView
             android:id="@+id/collection_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline_16dp"
-            app:layout_constraintTop_toBottomOf="@id/track_length"
             android:layout_marginTop="18dp"
-            android:textSize="13dp"
             android:fontFamily="@font/ys_display_regular"
-            android:textColor="@color/yp_textGray"
             android:text="Альбом"
-            tools:text="Альбом" />
+            android:textColor="@color/yp_textGray"
+            android:textSize="13sp"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline_16dp"
+            app:layout_constraintTop_toBottomOf="@id/track_length" />
 
         <TextView
             android:id="@+id/collection_name_data"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="@+id/right_guideline_16dp"
-            app:layout_constraintBaseline_toBaselineOf="@id/collection_name"
-            app:layout_constraintStart_toEndOf="@id/labels_barrier"
-            android:gravity="end"
-            android:layout_marginTop="18dp"
             android:fontFamily="@font/ys_display_regular"
+            android:gravity="end"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="13dp"
+            android:textSize="13sp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            app:layout_constraintBaseline_toBaselineOf="@id/collection_name"
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline_16dp"
+            app:layout_constraintStart_toEndOf="@id/labels_barrier"
             tools:text="Yesterday (Remastered 2009)" />
-
-        <!-- Год -->
-
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/release_group"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="visible"
-            app:constraint_referenced_ids="release,release_data" />
 
         <TextView
             android:id="@+id/release"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline_16dp"
-            app:layout_constraintTop_toBottomOf="@id/collection_name"
             android:layout_marginTop="18dp"
-            android:textSize="13dp"
             android:fontFamily="@font/ys_display_regular"
-            android:textColor="@color/yp_textGray"
             android:text="Год"
-            tools:text="Год" />
+            android:textColor="@color/yp_textGray"
+            android:textSize="13sp"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline_16dp"
+            app:layout_constraintTop_toBottomOf="@id/collection_name" />
 
         <TextView
             android:id="@+id/release_data"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="@+id/right_guideline_16dp"
-            app:layout_constraintBaseline_toBaselineOf="@id/release"
-            app:layout_constraintStart_toEndOf="@id/labels_barrier"
-            android:gravity="end"
-            android:layout_marginTop="18dp"
             android:fontFamily="@font/ys_display_regular"
+            android:gravity="end"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="13dp"
+            android:textSize="13sp"
+            app:layout_constraintBaseline_toBaselineOf="@id/release"
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline_16dp"
+            app:layout_constraintStart_toEndOf="@id/labels_barrier"
             tools:text="1965" />
-
-        <!-- Жанр -->
-
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/genre_group"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="visible"
-            app:constraint_referenced_ids="primary_genre_name,primary_genre_name_data" />
 
         <TextView
             android:id="@+id/primary_genre_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline_16dp"
-            app:layout_constraintTop_toBottomOf="@id/release"
             android:layout_marginTop="18dp"
-            android:textSize="13dp"
             android:fontFamily="@font/ys_display_regular"
-            android:textColor="@color/yp_textGray"
             android:text="Жанр"
-            tools:text="Жанр" />
+            android:textColor="@color/yp_textGray"
+            android:textSize="13sp"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline_16dp"
+            app:layout_constraintTop_toBottomOf="@id/release" />
 
         <TextView
             android:id="@+id/primary_genre_name_data"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="@+id/right_guideline_16dp"
-            app:layout_constraintBaseline_toBaselineOf="@id/primary_genre_name"
-            app:layout_constraintStart_toEndOf="@id/labels_barrier"
-            android:gravity="end"
-            android:layout_marginTop="18dp"
             android:fontFamily="@font/ys_display_regular"
+            android:gravity="end"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="13dp"
+            android:textSize="13sp"
+            app:layout_constraintBaseline_toBaselineOf="@id/primary_genre_name"
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline_16dp"
+            app:layout_constraintStart_toEndOf="@id/labels_barrier"
             tools:text="Rock" />
-
-        <!-- Страна -->
-
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/country_group"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="visible"
-            app:constraint_referenced_ids="country,country_data" />
 
         <TextView
             android:id="@+id/country"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline_16dp"
-            app:layout_constraintTop_toBottomOf="@id/primary_genre_name"
             android:layout_marginTop="18dp"
-            android:textSize="13dp"
             android:fontFamily="@font/ys_display_regular"
-            android:textColor="@color/yp_textGray"
             android:text="Страна"
-            tools:text="Страна" />
+            android:textColor="@color/yp_textGray"
+            android:textSize="13sp"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline_16dp"
+            app:layout_constraintTop_toBottomOf="@id/primary_genre_name" />
 
         <TextView
             android:id="@+id/country_data"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="@+id/right_guideline_16dp"
-            app:layout_constraintBaseline_toBaselineOf="@id/country"
-            app:layout_constraintStart_toEndOf="@id/labels_barrier"
-            android:gravity="end"
-            android:layout_marginTop="18dp"
             android:fontFamily="@font/ys_display_regular"
+            android:gravity="end"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="13dp"
+            android:textSize="13sp"
+            app:layout_constraintBaseline_toBaselineOf="@id/country"
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline_16dp"
+            app:layout_constraintStart_toEndOf="@id/labels_barrier"
             tools:text="Великобритания" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
