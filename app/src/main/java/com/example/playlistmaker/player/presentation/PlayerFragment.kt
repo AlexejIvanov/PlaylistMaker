@@ -22,11 +22,14 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+/**
+ * Фрагмент экрана аудиоплеера.
+ * Управляет отображением данных трека и состоянием воспроизведения.
+ */
 class PlayerFragment : Fragment() {
 
     private val viewModel: PlayerViewModel by viewModel()
 
-    // Элементы UI
     private lateinit var backButton: ImageView
     private lateinit var coverImage: ImageView
     private lateinit var trackName: TextView
@@ -53,9 +56,9 @@ class PlayerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initViews(view)
-        setupWindowInsets(view) // Добавление логики отступов
+        setupWindowInsets(view)
 
-        // Получение объекта Track из аргументов
+        // Извлечение данных трека из аргументов навигации
         val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             arguments?.getParcelable("TRACK_KEY", Track::class.java)
         } else {
@@ -65,7 +68,7 @@ class PlayerFragment : Fragment() {
 
         if (track != null) {
             bindTrackData(track)
-            // Готовим плеер, если состояние еще не инициализировано
+            // Инициализация плеера только при первом создании (защита от пересоздания фрагмента)
             if (viewModel.state.value is PlayerState.Default) {
                 viewModel.preparePlayer(track.previewUrl)
             }
@@ -73,16 +76,16 @@ class PlayerFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        // Подписка на состояние плеера
+        // Подписки на LiveData: состояние плеера и текущее время таймера
         viewModel.state.observe(viewLifecycleOwner) { state ->
             renderState(state)
         }
 
-        // Подписка на обновление таймера
         viewModel.timer.observe(viewLifecycleOwner) { time ->
             currentTime.text = time
         }
 
+        // Навигация назад и управление воспроизведением
         backButton.setOnClickListener {
             findNavController().popBackStack()
         }
@@ -107,23 +110,22 @@ class PlayerFragment : Fragment() {
         collectionGroup = view.findViewById(R.id.collection_group)
     }
 
-    /**
-     * Настройка отступов для Edge-to-Edge режима.
-     */
     private fun setupWindowInsets(view: View) {
         val playerScrollView = view.findViewById<View>(R.id.player_scroll_view)
 
         ViewCompat.setOnApplyWindowInsetsListener(playerScrollView) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(
-                top = systemBars.top,      // Отступ под статус-бар
-                bottom = systemBars.bottom,   // Отступ под системную навигацию (т.к. BottomNav скрыт)
+                top = systemBars.top,
+                bottom = systemBars.bottom,
                 left = systemBars.left,
                 right = systemBars.right
             )
             insets
         }
     }
+
+    // Обновление видимости и доступности кнопок управления в зависимости от состояния плеера.
 
     private fun renderState(state: PlayerState) {
         when (state) {
@@ -143,12 +145,13 @@ class PlayerFragment : Fragment() {
             }
         }
     }
-
-    private fun bindTrackData(track: Track) {
+    // Отображение статических данных трека в элементах интерфейса.
+      private fun bindTrackData(track: Track) {
         trackName.text = track.trackName
         artistName.text = track.artistName
         trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
 
+        // Скрытие группы Альбом, если данные отсутствуют
         if (track.collectionName.isNullOrEmpty()) {
             collectionGroup.isVisible = false
         } else {
@@ -160,6 +163,7 @@ class PlayerFragment : Fragment() {
         primaryGenreName.text = track.primaryGenreName
         country.text = track.country
 
+        // Загрузка обложки в высоком разрешении
         Glide.with(this)
             .load(track.getCoverArtwork())
             .placeholder(R.drawable.ic_placeholder_image)
@@ -169,6 +173,7 @@ class PlayerFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
+        // Принудительная пауза при сворачивании приложения или уходе с экрана
         viewModel.pause()
     }
 }

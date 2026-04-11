@@ -17,12 +17,11 @@ class RootActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 1. Включаем отображение контента "под" системными панелями (статус-бар и навигация)
         enableEdgeToEdge()
 
         setContentView(R.layout.activity_root)
 
-        // 2. Инициализация Navigation Component
+        // Инициализация Navigation Component
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.rootFragmentContainerView) as NavHostFragment
         val navController = navHostFragment.navController
@@ -30,22 +29,18 @@ class RootActivity : AppCompatActivity() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNavigationView.setupWithNavController(navController)
 
-        // 3. Обработка системных отступов для BottomNavigationView
-        // Это нужно, чтобы меню не "наползало" на системную полоску жестов или кнопки
         ViewCompat.setOnApplyWindowInsetsListener(bottomNavigationView) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(bottom = systemBars.bottom)
             insets
         }
 
-        // 4. Управление видимостью BottomNavigationView (ТЗ спринта №19)
+        // Управление видимостью панели навигации
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                // Скрываем меню на экране плеера
                 R.id.playerFragment -> {
                     bottomNavigationView.visibility = View.GONE
                 }
-                // На всех остальных экранах (Поиск, Медиатека, Настройки) — показываем
                 else -> {
                     bottomNavigationView.visibility = View.VISIBLE
                 }

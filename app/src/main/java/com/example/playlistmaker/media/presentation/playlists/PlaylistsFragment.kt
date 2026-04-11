@@ -8,7 +8,12 @@ import androidx.fragment.app.Fragment
 import com.example.playlistmaker.R
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+/**
+ * Фрагмент для отображения списка плейлистов во вкладке "Медиатека".
+ */
 class PlaylistsFragment: Fragment() {
+
+    // Инъекция ViewModel через Koin для управления данными и логикой плейлистов
     private val viewModel: PlaylistsViewModule by viewModel()
 
     override fun onCreateView(
@@ -20,6 +25,7 @@ class PlaylistsFragment: Fragment() {
     }
 
     companion object {
+        // Статический метод для создания экземпляра фрагмента (используется в MediaViewPagerAdapter)
         fun newInstance() = PlaylistsFragment()
     }
 }

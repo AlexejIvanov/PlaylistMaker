@@ -13,6 +13,9 @@ import com.example.playlistmaker.R
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
+/**
+ * Фрагмент экрана "Медиатека", управляющий вкладками через ViewPager2.
+ */
 class MediaFragment : Fragment() {
 
     private lateinit var viewPager: ViewPager2
@@ -31,12 +34,12 @@ class MediaFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initViews(view)
-        setupWindowInsets(view) // Добавление логики отступов
+        setupWindowInsets(view)
 
-        // ВАЖНО: Используем childFragmentManager для вложенных фрагментов
+        // Инициализация адаптера
         viewPager.adapter = MediaViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
 
-        // Настройка TabLayoutMediator
+        // Связываем TabLayout и ViewPager2, задавая заголовки вкладок
         tabMediator = TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             when (position) {
                 0 -> tab.text = getString(R.string.favorite_tracks)
@@ -51,19 +54,16 @@ class MediaFragment : Fragment() {
         tabLayout = view.findViewById(R.id.tab_layout)
     }
 
-    /**
-     * Настройка отступов для Edge-to-Edge режима.
-     */
-    private fun setupWindowInsets(view: View) {
-        val rootMedia = view.findViewById<View>(R.id.media) // ID из вашего XML fragment_media
+        private fun setupWindowInsets(view: View) {
+        val rootMedia = view.findViewById<View>(R.id.media)
 
         ViewCompat.setOnApplyWindowInsetsListener(rootMedia) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(
-                top = systemBars.top,    // Отступ под статус-бар
-                left = systemBars.left,  // Боковые отступы для вырезов
+                top = systemBars.top,
+                left = systemBars.left,
                 right = systemBars.right,
-                bottom = systemBars.bottom // Отступ снизу (учитывает BottomNav)
+                bottom = systemBars.bottom
             )
             insets
         }
@@ -71,7 +71,7 @@ class MediaFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // Обязательно отсоединяем медиатор во избежание утечек памяти
+        // Удаляем связь медиатора, чтобы избежать утечек памяти при уничтожении View
         if (::tabMediator.isInitialized) {
             tabMediator.detach()
         }

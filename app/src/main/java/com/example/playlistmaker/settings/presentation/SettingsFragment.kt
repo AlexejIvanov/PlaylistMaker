@@ -15,9 +15,12 @@ import com.example.playlistmaker.R
 import com.google.android.material.switchmaterial.SwitchMaterial
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+/**
+ * Фрагмент экрана настроек: управление темой и взаимодействие с внешними сервисами.
+ */
 class SettingsFragment : Fragment() {
 
-    // Инъекция ViewModel через Koin
+    // Инъекция ViewModel для работы с бизнес-логикой настроек темы
     private val viewModel: SettingsViewModel by viewModel()
 
     private lateinit var themeSwitch: SwitchMaterial
@@ -37,19 +40,19 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initViews(view)
-        setupWindowInsets(view) // Добавление логики отступов
+        setupWindowInsets(view)
 
-        // Подписка на состояние темы для синхронизации переключателя
+        // Синхронизация состояния переключателя с текущими настройками темы
         viewModel.themeState.observe(viewLifecycleOwner) { isDark ->
             themeSwitch.isChecked = isDark
         }
 
-        // Слушатель переключения темы
+        // Обработка ручного переключения темы пользователем
         themeSwitch.setOnCheckedChangeListener { _, checked ->
             viewModel.switchTheme(checked)
         }
 
-        // Реализация "Поделиться приложением"
+        // Поделиться ссылкой на приложение через системный диалог выбора
         shareButton.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
@@ -58,7 +61,7 @@ class SettingsFragment : Fragment() {
             startActivity(Intent.createChooser(shareIntent, null))
         }
 
-        // Реализация "Написать в поддержку"
+        // Отправка письма в поддержку через почтовые приложения
         supportButton.setOnClickListener {
             val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("mailto:")
@@ -69,7 +72,7 @@ class SettingsFragment : Fragment() {
             startActivity(emailIntent)
         }
 
-        // Открытие Пользовательского соглашения
+        // Переход на веб-страницу с пользовательским соглашением
         agreementButton.setOnClickListener {
             val url = getString(R.string.link_to_the_user_agreement)
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
@@ -84,11 +87,9 @@ class SettingsFragment : Fragment() {
         agreementButton = view.findViewById(R.id.user_agreement_button)
     }
 
-    /**
-     * Настройка отступов для Edge-to-Edge режима.
-     */
+
     private fun setupWindowInsets(view: View) {
-        val rootSettings = view.findViewById<View>(R.id.settings) // ID из вашего XML fragment_settings
+        val rootSettings = view.findViewById<View>(R.id.settings)
         val density = resources.displayMetrics.density
         val sidePadding = (16 * density).toInt()
 
@@ -96,9 +97,9 @@ class SettingsFragment : Fragment() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(
                 left = sidePadding + systemBars.left,
-                top = systemBars.top,      // Отступ под статус-бар
+                top = systemBars.top,
                 right = sidePadding + systemBars.right,
-                bottom = systemBars.bottom // Отступ снизу для BottomNav
+                bottom = systemBars.bottom
             )
             insets
         }

@@ -22,6 +22,9 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.core.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+/**
+ * Фрагмент экрана поиска: управление вводом, отображение результатов и истории запросов.
+ */
 class SearchFragment : Fragment() {
 
     private val viewModel: SearchViewModel by viewModel()
@@ -60,6 +63,7 @@ class SearchFragment : Fragment() {
         setupListeners()
         setupWindowInsets(view)
 
+        // Подписка на реактивное изменение состояний экрана (Loading, Content, Error, History)
         viewModel.state.observe(viewLifecycleOwner) { state ->
             renderState(state)
         }
@@ -79,13 +83,11 @@ class SearchFragment : Fragment() {
     }
 
     private fun setupWindowInsets(view: View) {
-        // Используем id search_screen из твоего XML
         val rootElement = view.findViewById<View>(R.id.search_screen)
 
         ViewCompat.setOnApplyWindowInsetsListener(rootElement) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(
-                // Не добавляем 16dp здесь, так как они уже прописаны в XML через margin
                 left = systemBars.left,
                 top = systemBars.top,
                 right = systemBars.right,
@@ -95,7 +97,10 @@ class SearchFragment : Fragment() {
         }
     }
 
+    // Настройка адаптеров для списков поиска и истории.
+
     private fun setupAdapters() {
+        // Основной список результатов
         trackAdapter = TrackAdapter(trackList) { track ->
             if (viewModel.clickDebounce()) {
                 viewModel.addTrackToHistory(track)
@@ -105,6 +110,7 @@ class SearchFragment : Fragment() {
         recyclerViewTracks.layoutManager = LinearLayoutManager(requireContext())
         recyclerViewTracks.adapter = trackAdapter
 
+        // Список последних запросов (история)
         historyAdapter = TrackAdapter(historyList) { track ->
             if (viewModel.clickDebounce()) {
                 viewModel.addTrackToHistory(track)
@@ -115,6 +121,7 @@ class SearchFragment : Fragment() {
         recyclerViewHistory.adapter = historyAdapter
     }
 
+    // Привязка действий к элементам управления: очистка, повтор запроса, логика ввода.
     private fun setupListeners() {
         clearButton.setOnClickListener {
             searchEditText.setText("")
@@ -130,12 +137,14 @@ class SearchFragment : Fragment() {
             viewModel.clearHistory()
         }
 
+        // Показ истории при фокусе на пустом поле ввода
         searchEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && searchEditText.text.isEmpty()) {
                 viewModel.showHistory()
             }
         }
 
+        // Слушатель изменений текста для запуска Debounce-поиска
         textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -146,6 +155,7 @@ class SearchFragment : Fragment() {
         }
         searchEditText.addTextChangedListener(textWatcher)
     }
+
 
     private fun renderState(state: SearchScreenState) {
         progressBar.isVisible = state is SearchScreenState.Loading
@@ -169,6 +179,8 @@ class SearchFragment : Fragment() {
         }
     }
 
+    // Навигация к плееру с передачей выбранного трека через аргументы Navigation Component.
+
     private fun openPlayer(track: Track) {
         findNavController().navigate(
             R.id.action_searchFragment_to_playerFragment,
@@ -183,6 +195,7 @@ class SearchFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        // Очистка TextWatcher и ссылок на View для предотвращения утечек памяти
         textWatcher?.let { searchEditText.removeTextChangedListener(it) }
         textWatcher = null
     }
