@@ -76,7 +76,7 @@ class SearchViewModel(
         if (history.isNotEmpty()) {
             _state.value = SearchScreenState.History(history)
         } else {
-            _state.value = SearchScreenState.Content(emptyList()) // Если истории нет — пустой экран
+            _state.value = SearchScreenState.Content(emptyList())
         }
     }
 

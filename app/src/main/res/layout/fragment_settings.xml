@@ -9,13 +9,14 @@
     android:paddingStart="16dp"
     android:paddingEnd="16dp">
 
-    <!-- Заголовок экрана (без кнопки назад) -->
+
     <com.google.android.material.appbar.MaterialToolbar
         style="@style/nameActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:title="@string/settings"
-        app:titleTextColor="?attr/colorOnSurface" />
+        app:titleTextColor="?attr/colorOnSurface"
+        app:contentInsetStart="0dp"/>
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/theme_switch"
