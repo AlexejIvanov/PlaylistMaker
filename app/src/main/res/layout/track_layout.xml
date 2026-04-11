@@ -83,7 +83,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="@dimen/margin_small"
     android:src="@drawable/ic_arrow_forward_24"
     app:tint="?attr/iconColor" />
 
