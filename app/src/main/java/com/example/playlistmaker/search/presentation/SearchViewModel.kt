@@ -23,12 +23,18 @@ class SearchViewModel(
         private const val CLICK_DEBOUNCE_DELAY = 1000L  // Защита от повторных кликов (мс)
     }
 
+
     // LiveData для управления состоянием экрана (загрузка, контент, ошибка и т.д.)
     private val _state = MutableLiveData<SearchScreenState>()
     val state: LiveData<SearchScreenState> get() = _state
 
     private var searchRunnable: Runnable? = null
     private var isClickAllowed = true // Флаг для блокировки кликов
+    private var lastClickTime: Long? = null
+
+    init {
+        showHistory()
+    }
 
     /**
      * Реализация Debounce: откладывает выполнение поиска на 2 секунды после ввода.
@@ -85,9 +91,9 @@ class SearchViewModel(
      */
     fun addTrackToHistory(track: Track) {
         searchHistoryInteractor.addTrackToHistory(track)
-        if (_state.value is SearchScreenState.History) {
-            showHistory() // Сразу обновляем список на экране истории
-        }
+            if(_state.value is SearchScreenState.History) {
+                showHistory()
+            }
     }
 
     /**
@@ -102,12 +108,12 @@ class SearchViewModel(
      * Метод для ограничения частоты кликов (защита от открытия двух экранов плеера).
      */
     fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        val currentTime = System.currentTimeMillis()
+        if (lastClickTime == null || currentTime - lastClickTime!! >= CLICK_DEBOUNCE_DELAY) {
+            lastClickTime = currentTime
+            return true
         }
-        return current
+        return false
     }
 
     /**
