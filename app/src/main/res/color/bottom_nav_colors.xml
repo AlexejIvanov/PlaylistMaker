@@ -4,5 +4,5 @@
     <item android:color="@color/yp_blue" android:state_checked="true" />
 
     <!-- Цвет для неактивной вкладки  -->
-    <item android:color="?attr/iconColor" />
+    <item android:color="?attr/colorOnSurface" />
 </selector>
