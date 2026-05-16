@@ -4,18 +4,24 @@
     <dimen name="artist_mane_text_size">11sp</dimen>
     <dimen name="text_size_12">12sp</dimen>
     <dimen name="text_size_14">14sp</dimen>
+    <dimen name="text_size_13">13sp</dimen>
     <dimen name="text_size_16">16sp</dimen>
     <dimen name="text_size_19">19sp</dimen>
     <dimen name="text_size_title">22sp</dimen>
 
     <!-- Внешние отступы (Margins) -->
     <dimen name="margin_x_small">1dp</dimen>
+    <dimen name="margin_4">4dp</dimen>
     <dimen name="margin_mini">8dp</dimen>
     <dimen name="margin_small_end">12dp</dimen>
     <dimen name="margin_small">16dp</dimen>
+    <dimen name="margin_top_18">18dp</dimen>
     <dimen name="margin_top_medium">24dp</dimen>
+    <dimen name="margin_top_28">28dp</dimen>
+    <dimen name="margin_top_30">30dp</dimen>
     <dimen name="margin_top_large">42dp</dimen>
     <dimen name="margin_top_extra_large">45dp</dimen>
+    <dimen name="margin_top_48">48dp</dimen>
 
     <!-- Внутренние отступы (Paddings) -->
     <dimen name="padding_small">8dp</dimen>
@@ -25,6 +31,7 @@
     <dimen name="padding_horizontal">16dp</dimen>
     <dimen name="padding_medium">16dp</dimen>
     <dimen name="padding_vertical">20dp</dimen>
+    <dimen name="padding_horizontal_24">24dp</dimen>
     <dimen name="padding_bottom_large">28dp</dimen>
 
     <!-- Радиусы скругления (Corners) -->
@@ -38,5 +45,8 @@
     <dimen name="layout_height">36dp</dimen>
     <dimen name="track_cover_size">45dp</dimen>
     <dimen name="track_artist_width">54dp</dimen>
+
+    <!-- Размеры Progress Bar -->
+    <dimen name="progress_par_layout">44dp</dimen>
 
 </resources>

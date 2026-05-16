@@ -52,6 +52,8 @@ dependencies {
 
     // Glide
     implementation(libs.glide)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     annotationProcessor(libs.glide.compiler)
 
     testImplementation(libs.junit)

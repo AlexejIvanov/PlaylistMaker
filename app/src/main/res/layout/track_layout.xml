@@ -13,7 +13,8 @@
         android:layout_height="@dimen/track_cover_size"
         android:layout_marginTop="@dimen/margin_mini"
         android:layout_marginBottom="@dimen/margin_mini"
-        android:scaleType="centerCrop" />
+        android:layout_marginStart="16dp"
+    android:scaleType="centerCrop" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -37,7 +38,7 @@
             android:singleLine="true"
             android:textColor="?attr/colorOnSurface"
             android:textSize="@dimen/text_size_16"
-            tools:text="Название Трека" />
+            tools:text="Hotel Breakfast" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -56,7 +57,7 @@
                 android:singleLine="true"
                 android:textColor="?attr/colorArtistNameText"
                 android:textSize="@dimen/artist_mane_text_size"
-                tools:text="Очень длинное имя артиста для теста заполнения view и обрезания текста " />
+                tools:text="Bladee" />
 
             <ImageView
                 android:layout_width="match_parent"
@@ -72,7 +73,7 @@
                 android:fontFamily="@font/ys_display_regular"
                 android:textColor="?attr/colorTimeTrackText"
                 android:textSize="@dimen/artist_mane_text_size"
-                tools:text="03:45" />
+                tools:text="02:14" />
         </LinearLayout>
 
     </LinearLayout>
@@ -82,7 +83,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_arrow_forward_24"
-        app:tint="?attr/iconColor" />
+        android:layout_marginEnd="@dimen/margin_small"
+    android:src="@drawable/ic_arrow_forward_24"
+    app:tint="?attr/iconColor" />
 
 </LinearLayout>
