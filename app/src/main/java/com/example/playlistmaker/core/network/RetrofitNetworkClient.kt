@@ -5,6 +5,8 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.example.playlistmaker.search.data.dto.TrackSearchRequest
 import com.example.playlistmaker.search.data.network.ITunesApiService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * Реализация сетевого клиента на Retrofit.
@@ -15,7 +17,7 @@ class RetrofitNetworkClient(
     private val iTunesService: ITunesApiService
 ) : NetworkClient {
 
-    override fun doRequest(dto: Any): Response {
+    override suspend fun doRequest(dto: Any): Response {
         // 1. Проверка наличия интернета
         if (!isConnected()) {
             return Response().apply { resultCode = -1 } // -1 — ошибка соединения
@@ -27,16 +29,15 @@ class RetrofitNetworkClient(
         }
 
         // 3. Выполнение синхронного запроса через Retrofit
-        return try {
-            val response = iTunesService.search(dto.expression).execute()
-            val body = response.body()
-
-            // Если тело ответа есть, ставим код ответа сервера, иначе возвращаем пустой Response с кодом
-            body?.apply { resultCode = response.code() } ?: Response().apply { resultCode = response.code() }
-        } catch (e: Exception) {
-            Response().apply { resultCode = 500 } // 500 — ошибка сервера или исключение
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = iTunesService.search(dto.expression)
+                response.apply { resultCode = 200 }
+            } catch (e: Exception) {
+                Response().apply { resultCode = 500 }
+                }
+            }
         }
-    }
 
     /**
      * Проверяет наличие доступа к интернету (Wi-Fi, сотовая связь или Ethernet).

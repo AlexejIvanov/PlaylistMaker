@@ -46,28 +46,3 @@ class App : Application() {
         }
     }
 }
-
-/**
- * Главный экран приложения.
- * Обеспечивает навигацию между основными разделами: Поиск, Медиатека и Настройки.
- */
-class RootActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_root)
-
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.rootFragmentContainerView) as NavHostFragment
-        val navController = navHostFragment.navController
-
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        bottomNavigationView.setupWithNavController(navController)
-
-        // Скрываем BottomNav на экране плеера
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            bottomNavigationView.isVisible = when (destination.id) {
-                R.id.playerFragment -> false
-                else -> true
-            }
-        }
-    }
-}

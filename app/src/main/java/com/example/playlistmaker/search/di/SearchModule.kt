@@ -23,7 +23,7 @@ val searchModule = module {
     }
 
     factory<TracksInteractor> {
-        TracksInteractorImpl(repository = get(), executor = Executors.newCachedThreadPool())
+        TracksInteractorImpl(repository = get())
     }
 
     factory<SearchHistoryInteractor> {
@@ -33,8 +33,7 @@ val searchModule = module {
     viewModel {
         SearchViewModel(
             tracksInteractor = get(),
-            searchHistoryInteractor = get(),
-            handler = get()
+            searchHistoryInteractor = get()
         )
     }
 }

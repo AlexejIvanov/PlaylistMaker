@@ -37,12 +37,15 @@ class RootActivity : AppCompatActivity() {
 
         // Управление видимостью панели навигации
         navController.addOnDestinationChangedListener { _, destination, _ ->
+
             when (destination.id) {
-                R.id.playerFragment -> {
-                    bottomNavigationView.visibility = View.GONE
+                R.id.searchFragment,
+                R.id.mediaLibraryFragment,
+                R.id.settingsFragment -> {
+                    bottomNavigationView.visibility = View.VISIBLE
                 }
                 else -> {
-                    bottomNavigationView.visibility = View.VISIBLE
+                    bottomNavigationView.visibility = View.GONE
                 }
             }
         }
