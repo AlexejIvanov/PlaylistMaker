@@ -8,5 +8,5 @@ import com.example.playlistmaker.core.network.Response
  */
 interface NetworkClient {
     // Выполняет сетевой запрос на основе переданного DTO и возвращает базовый Response
-    fun doRequest(dto: Any): Response
+    suspend fun doRequest(dto: Any): Response
 }

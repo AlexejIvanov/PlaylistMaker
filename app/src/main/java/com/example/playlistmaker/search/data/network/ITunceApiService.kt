@@ -11,5 +11,5 @@ import retrofit2.http.Query
 interface ITunesApiService {
     // Выполняет GET-запрос к эндпоинту /search, фильтруя результаты только по песням (entity=song)
     @GET("/search?entity=song")
-    fun search(@Query("term") text: String): Call<ITunesResponse> // @Query("term") подставляет текст поиска в URL
+    suspend fun search(@Query("term") text: String): ITunesResponse // @Query("term") подставляет текст поиска в URL
 }

@@ -23,8 +23,7 @@ val playerModule = module {
 
     viewModel {
         PlayerViewModel(
-            playerInteractor = get(),
-            handler = get()
+            playerInteractor = get()
         )
     }
 }
