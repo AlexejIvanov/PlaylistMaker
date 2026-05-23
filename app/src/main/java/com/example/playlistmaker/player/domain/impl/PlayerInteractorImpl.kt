@@ -13,9 +13,10 @@ class PlayerInteractorImpl(private val repository: PlayerRepository) : PlayerInt
     override fun preparePlayer(url: String, listener: PlayerInteractor.PlayerPreparedListener) {
         repository.prepare(
             url = url,
-            onPrepared = {listener.onPrepared()},
-            onError = {listener.onError()}
-        )
+            onPrepared = { listener.onPrepared() },
+        ) {
+            listener.onError()
+        }
     }
 
     override fun startPlayer() = repository.start() // Запуск проигрывания

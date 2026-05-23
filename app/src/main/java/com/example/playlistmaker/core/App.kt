@@ -1,20 +1,15 @@
 package com.example.playlistmaker.core
 
 import android.app.Application
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.view.isVisible
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
-import com.example.playlistmaker.R
 import com.example.playlistmaker.core.di.coreModule
+import com.example.playlistmaker.core.di.dataModule
+import com.example.playlistmaker.favorite.di.favoriteModule
 import com.example.playlistmaker.media.di.mediaModule
 import com.example.playlistmaker.player.di.playerModule
 import com.example.playlistmaker.search.di.searchModule
 import com.example.playlistmaker.settings.di.settingsModule
 import com.example.playlistmaker.settings.domain.api.SettingsInteractor
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -31,7 +26,7 @@ class App : Application() {
         // Инициализация Koin: передаем контекст приложения и регистрируем слои архитектуры
         startKoin {
             androidContext(this@App)
-            modules(coreModule, searchModule, playerModule, settingsModule, mediaModule)
+            modules(coreModule, searchModule, playerModule, settingsModule, mediaModule, dataModule, favoriteModule)
         }
 
         // Инжектим интерактор настроек, чтобы узнать, какую тему применить при запуске

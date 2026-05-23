@@ -9,16 +9,17 @@ import kotlinx.parcelize.Parcelize
  */
 @Parcelize
 data class Track(
-    val trackName: String,         // Название композиции
-    val artistName: String,        // Имя исполнителя
-    val trackTimeMillis: Long,     // Продолжительность трека (мс)
-    val artworkUrl100: String,     // Ссылка на обложку (100x100)
-    val trackId: Long,             // Уникальный ID трека
-    val collectionName: String?,   // Название альбома
-    val releaseDate: String?,      // Дата выхода
-    val primaryGenreName: String,  // Жанр
-    val country: String,           // Страна
-    val previewUrl: String         // Ссылка на аудио-превью (30 сек)
+    val trackName: String, // Название композиции
+    val artistName: String, // Имя исполнителя
+    val trackTimeMillis: Long, // Продолжительность трека (мс)
+    val artworkUrl100: String, // Ссылка на обложку (100x100)
+    val trackId: Long, // Уникальный ID трека
+    val collectionName: String?, // Название альбома
+    val releaseDate: String?, // Дата выхода
+    val primaryGenreName: String, // Жанр
+    val country: String, // Страна
+    val previewUrl: String, // Ссылка на аудио-превью
+    var isFavorite: Boolean = false // Флаг добавления трека в избранное
 ) : Parcelable {
 
     // Метод для получения ссылки на обложку в высоком разрешении (512x512)

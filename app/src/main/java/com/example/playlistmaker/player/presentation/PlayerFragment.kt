@@ -41,13 +41,14 @@ class PlayerFragment : Fragment() {
     private lateinit var country: TextView
     private lateinit var playButton: ImageView
     private lateinit var pauseButton: ImageView
+    private lateinit var favoriteButton: ImageView
     private lateinit var currentTime: TextView
     private lateinit var collectionGroup: Group
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.fragment_player, container, false)
     }
@@ -70,7 +71,7 @@ class PlayerFragment : Fragment() {
             bindTrackData(track)
             // Инициализация плеера только при первом создании (защита от пересоздания фрагмента)
             if (viewModel.state.value is PlayerState.Default) {
-                viewModel.preparePlayer(track.previewUrl)
+                viewModel.preparePlayer(track)
             }
         } else {
             findNavController().popBackStack()
@@ -85,6 +86,10 @@ class PlayerFragment : Fragment() {
             currentTime.text = time
         }
 
+        viewModel.isFavorite.observe(viewLifecycleOwner) { isFavorite ->
+            renderFavorite(isFavorite)
+        }
+
         // Навигация назад и управление воспроизведением
         backButton.setOnClickListener {
             findNavController().popBackStack()
@@ -92,6 +97,7 @@ class PlayerFragment : Fragment() {
 
         playButton.setOnClickListener { viewModel.play() }
         pauseButton.setOnClickListener { viewModel.pause() }
+        favoriteButton.setOnClickListener { viewModel.onFavoriteClicked() }
     }
 
     private fun initViews(view: View) {
@@ -106,6 +112,7 @@ class PlayerFragment : Fragment() {
         country = view.findViewById(R.id.country_data)
         playButton = view.findViewById(R.id.play_button)
         pauseButton = view.findViewById(R.id.pause_button)
+        favoriteButton = view.findViewById(R.id.to_favorite_button)
         currentTime = view.findViewById(R.id.playback_progress)
         collectionGroup = view.findViewById(R.id.collection_group)
     }
@@ -119,7 +126,7 @@ class PlayerFragment : Fragment() {
                 top = systemBars.top,
                 bottom = systemBars.bottom,
                 left = systemBars.left,
-                right = systemBars.right
+                right = systemBars.right,
             )
             insets
         }
@@ -145,6 +152,15 @@ class PlayerFragment : Fragment() {
             }
         }
     }
+
+    private fun renderFavorite(isFavorite: Boolean) {
+        if (isFavorite) {
+            favoriteButton.setImageResource(R.drawable.ic_is_favorite_51x51)
+        } else {
+            favoriteButton.setImageResource(R.drawable.ic_add_to_favorites_51x51)
+        }
+    }
+
     // Отображение статических данных трека в элементах интерфейса.
       private fun bindTrackData(track: Track) {
         trackName.text = track.trackName

@@ -11,11 +11,11 @@ import com.example.playlistmaker.search.domain.impl.TracksInteractorImpl
 import com.example.playlistmaker.search.presentation.SearchViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
-import java.util.concurrent.Executors
 
 val searchModule = module {
-    factory<TracksRepository> {
-        TracksRepositoryImpl(networkClient = get())
+
+    single<TracksRepository> {
+        TracksRepositoryImpl(get(), get())
     }
 
     factory<SearchHistoryRepository> {
@@ -33,7 +33,8 @@ val searchModule = module {
     viewModel {
         SearchViewModel(
             tracksInteractor = get(),
-            searchHistoryInteractor = get()
+            searchHistoryInteractor = get(),
+            favoriteTrackInteractor = get(),
         )
     }
 }

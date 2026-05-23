@@ -15,12 +15,12 @@ class PlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : PlayerReposit
             mediaPlayer.setDataSource(url)
             mediaPlayer.setOnPreparedListener { onPrepared() } // Вызов колбэка при готовности
             mediaPlayer.setOnCompletionListener(null) // Очищаем старые слушатели
-            mediaPlayer.setOnErrorListener { _, _, _, ->
+            mediaPlayer.setOnErrorListener { _, _, _ ->
                 onError()
                 true
             }
             mediaPlayer.prepareAsync()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             onError()
         }
 

@@ -5,7 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.core.models.Track
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
+import com.example.playlistmaker.favorite.domain.db.FavoriteTrackInteractor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -17,7 +19,8 @@ import java.util.Locale
  * ViewModel для управления состоянием экрана плеера и логикой таймера.
  */
 class PlayerViewModel(
-    private val playerInteractor: PlayerInteractor
+    private val playerInteractor: PlayerInteractor,
+    private val favoriteTrackInteractor: FavoriteTrackInteractor,
 ) : ViewModel() {
 
     companion object {
@@ -30,15 +33,23 @@ class PlayerViewModel(
     val state: LiveData<PlayerState> get() = _state
 
     // Текущее время воспроизведения в формате "mm:ss"
-    private val _timer = MutableLiveData<String>(DEFAULT_TIMER_VALUE)
+    private val _timer = MutableLiveData(DEFAULT_TIMER_VALUE)
     val timer: LiveData<String> get() = _timer
 
+    private val _isFavorite = MutableLiveData<Boolean>()
+    val isFavorite: LiveData<Boolean> get() = _isFavorite
+
     private var timerJob: Job? = null
+    private var currentTrack: Track? = null
 
 
     // Подготовка плеера: установка URL и слушателей завершения трека
-    fun preparePlayer(url: String) {
-        playerInteractor.preparePlayer(url, object : PlayerInteractor.PlayerPreparedListener {
+    fun preparePlayer(track: Track) {
+        currentTrack = track
+        _isFavorite.value = track.isFavorite
+        playerInteractor.preparePlayer(
+            track.previewUrl,
+            object : PlayerInteractor.PlayerPreparedListener {
             override fun onPrepared() {
                 _state.value = PlayerState.Prepared
             }
@@ -46,7 +57,8 @@ class PlayerViewModel(
             override fun onError() {
                 _state.postValue(PlayerState.Default)
             }
-        })
+        },
+        )
         playerInteractor.setOnCompletionListener {
             _state.value = PlayerState.Prepared
             _timer.value = DEFAULT_TIMER_VALUE
@@ -72,14 +84,33 @@ class PlayerViewModel(
         timerJob?.cancel()
         timerJob = viewModelScope.launch {
             while (playerInteractor.isPlaying()) {
-                _timer.value = formatTime(playerInteractor.getCurrentPosition())
+                val position = playerInteractor.getCurrentPosition()
+                _timer.value = formatTime(position)
                 delay(UPDATE_DELAY_MILLIS)
             }
         }
     }
 
     private fun formatTime(millis: Int): String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(millis)
+        return if (millis < 0) {
+            DEFAULT_TIMER_VALUE
+        } else {
+            SimpleDateFormat("mm:ss", Locale.getDefault()).format(millis)
+        }
+    }
+
+    fun onFavoriteClicked() {
+        val track = currentTrack ?: return
+        viewModelScope.launch {
+            if (track.isFavorite) {
+                favoriteTrackInteractor.removeTrackFromFavorites(track)
+                track.isFavorite = false
+            } else {
+                favoriteTrackInteractor.addTrackToFavorites(track)
+                track.isFavorite = true
+            }
+            _isFavorite.postValue(track.isFavorite)
+        }
     }
 
     // Освобождение ресурсов при уничтожении ViewModel (предотвращение утечек)
