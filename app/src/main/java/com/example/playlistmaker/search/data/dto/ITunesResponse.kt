@@ -8,5 +8,5 @@ import com.example.playlistmaker.core.network.Response
  */
 data class ITunesResponse(
     val resultCount: Int,        // Общее количество найденных треков в ответе
-    val results: List<TrackDto>   // Список объектов с данными о каждом треке
+    val results: List<TrackDto>,   // Список объектов с данными о каждом треке
 ) : Response()

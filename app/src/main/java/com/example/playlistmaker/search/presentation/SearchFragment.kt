@@ -193,6 +193,11 @@ class SearchFragment : Fragment() {
         imm?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.updateFavorites()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         // Очистка TextWatcher и ссылок на View для предотвращения утечек памяти

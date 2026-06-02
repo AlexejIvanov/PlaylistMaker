@@ -1,15 +1,16 @@
 package com.example.playlistmaker.search.presentation
 
-import android.os.Handler
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.favorite.domain.db.FavoriteTrackInteractor
 import com.example.playlistmaker.search.domain.api.SearchHistoryInteractor
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.core.models.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 /**
@@ -18,8 +19,9 @@ import kotlinx.coroutines.launch
  */
 class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
-    private val searchHistoryInteractor: SearchHistoryInteractor
-) : ViewModel() { // Handler больше не нужен!
+    private val searchHistoryInteractor: SearchHistoryInteractor,
+    private val favoriteTrackInteractor: FavoriteTrackInteractor,
+) : ViewModel() {
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
@@ -72,7 +74,7 @@ class SearchViewModel(
         viewModelScope.launch {
             tracksInteractor
                 .searchTracks(query)
-                .collect { pair -> // Собираем данные из Flow
+                .collect { pair ->
                     val foundTracks = pair.first
                     val errorMessage = pair.second
 
@@ -89,13 +91,18 @@ class SearchViewModel(
         }
     }
 
-    // Методы истории остаются почти такими же, но без Handler
     fun showHistory() {
-        val history = searchHistoryInteractor.getHistory()
-        _state.value = if (history.isNotEmpty()) {
-            SearchScreenState.History(history)
-        } else {
-            SearchScreenState.Content(emptyList())
+        viewModelScope.launch {
+            val history = searchHistoryInteractor.getHistory()
+            val favoriteIds = favoriteTrackInteractor.getFavoriteTracks().first().map { it.trackId }.toSet()
+            
+            history.forEach { it.isFavorite = favoriteIds.contains(it.trackId) }
+
+            _state.value = if (history.isNotEmpty()) {
+                SearchScreenState.History(history)
+            } else {
+                SearchScreenState.Content(emptyList())
+            }
         }
     }
 
@@ -106,8 +113,24 @@ class SearchViewModel(
 
     fun addTrackToHistory(track: Track) {
         searchHistoryInteractor.addTrackToHistory(track)
-        if (_state.value is SearchScreenState.History) {
-            showHistory()
+    }
+
+    // Метод для обновления статуса "Избранное" у текущего состояния (после возвращения с экрана плеера)
+    fun updateFavorites() {
+        val currentState = _state.value
+        if (currentState is SearchScreenState.Content || currentState is SearchScreenState.History) {
+            viewModelScope.launch {
+                val favoriteIds = favoriteTrackInteractor.getFavoriteTracks().first().map { it.trackId }.toSet()
+                
+                val tracksToUpdate = when (currentState) {
+                    is SearchScreenState.Content -> currentState.tracks
+                    is SearchScreenState.History -> currentState.tracks
+                    else -> emptyList()
+                }
+
+                tracksToUpdate.forEach { it.isFavorite = favoriteIds.contains(it.trackId) }
+                _state.postValue(currentState)
+            }
         }
     }
 }

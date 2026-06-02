@@ -1,6 +1,5 @@
 package com.example.playlistmaker.search.domain.api
 
-import com.bumptech.glide.load.engine.Resource
 import com.example.playlistmaker.core.models.Track
 import kotlinx.coroutines.flow.Flow
 
