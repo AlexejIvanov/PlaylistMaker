@@ -14,15 +14,10 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-/**
- * Koin-модуль для предоставления зависимостей уровня данных (Data Layer).
- */
 val dataModule = module {
 
-    // Единственный экземпляр Gson для работы с JSON
     single { Gson() }
 
-    // Настройка и создание сервиса iTunes API через Retrofit
     single<ITunesApiService> {
         Retrofit.Builder()
             .baseUrl("https://itunes.apple.com")
@@ -31,25 +26,22 @@ val dataModule = module {
             .create(ITunesApiService::class.java)
     }
 
-    // Хранилище SharedPreferences для сохранения настроек и истории
     single<SharedPreferences> {
         androidContext().getSharedPreferences("playlist_maker_preferences", Context.MODE_PRIVATE)
     }
 
-    // Реализация сетевого клиента, использующая Retrofit и контекст для проверки связи
     single<NetworkClient> {
         RetrofitNetworkClient(context = androidContext(), iTunesService = get())
     }
 
-    //Инициализация базы данных
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
             .build()
     }
 
     single { get<AppDatabase>().favoriteTracksDao() }
-
+    single { get<AppDatabase>().playlistDao() }
+    single { get<AppDatabase>().playlistTrackDao() }
     factory { TrackDbConvertor() }
 
 }
-

@@ -22,9 +22,6 @@ val playerModule = module {
     }
 
     viewModel {
-        PlayerViewModel(
-            playerInteractor = get(),
-            favoriteTrackInteractor = get(),
-        )
+        PlayerViewModel(get(), get(), get())
     }
 }

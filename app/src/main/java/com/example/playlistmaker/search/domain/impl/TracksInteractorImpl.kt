@@ -6,7 +6,6 @@ import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.api.TracksRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.util.concurrent.ExecutorService
 
 /**
  * Реализация интерактора для поиска треков.

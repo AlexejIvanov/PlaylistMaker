@@ -7,6 +7,6 @@ import com.example.playlistmaker.core.models.ThemeSettings
  * Определяет контракт для сохранения и получения темы оформления в слое Data.
  */
 interface SettingRepository {
-    fun getThemeSettings(): ThemeSettings           // Получить текущие настройки темы (темная/светлая)
+    fun getThemeSettings(): ThemeSettings // Получить текущие настройки темы (темная/светлая)
     fun updateThemeSettings(settings: ThemeSettings) // Сохранить и применить новые настройки темы
 }

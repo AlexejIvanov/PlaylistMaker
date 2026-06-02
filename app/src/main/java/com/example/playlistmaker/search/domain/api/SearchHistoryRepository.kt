@@ -7,7 +7,7 @@ import com.example.playlistmaker.core.models.Track
  * Описывает контракт для сохранения и получения данных в слое Data.
  */
 interface SearchHistoryRepository {
-    fun read(): List<Track>    // Получить список сохраненных треков из хранилища
-    fun add(track: Track)      // Сохранить новый трек в историю
-    fun clear()                // Удалить все записи из истории поиска
+    fun read(): List<Track> // Получить список сохраненных треков из хранилища
+    fun add(track: Track) // Сохранить новый трек в историю
+    fun clear() // Удалить все записи из истории поиска
 }
