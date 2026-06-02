@@ -1,6 +1,6 @@
 package com.example.playlistmaker.media.di
 
-import com.example.playlistmaker.media.presentation.playlists.PlaylistsViewModule
+import com.example.playlistmaker.media.presentation.playlists.PlaylistsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -11,7 +11,6 @@ val mediaModule = module {
 
     // ViewModel для управления логикой вкладки "Плейлисты"
     viewModel {
-        PlaylistsViewModule()
+        PlaylistsViewModel(get())
     }
-
 }

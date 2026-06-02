@@ -184,7 +184,7 @@ class SearchFragment : Fragment() {
     private fun openPlayer(track: Track) {
         findNavController().navigate(
             R.id.action_searchFragment_to_playerFragment,
-            bundleOf("TRACK_KEY" to track)
+            bundleOf("track" to track)
         )
     }
 

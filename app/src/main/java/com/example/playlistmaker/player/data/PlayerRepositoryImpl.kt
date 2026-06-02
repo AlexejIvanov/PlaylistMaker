@@ -23,9 +23,6 @@ class PlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : PlayerReposit
         } catch (_: Exception) {
             onError()
         }
-
-
-
     }
 
     override fun start() = mediaPlayer.start() // Начать или продолжить воспроизведение
