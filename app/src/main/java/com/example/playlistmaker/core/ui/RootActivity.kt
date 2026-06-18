@@ -44,6 +44,7 @@ class RootActivity : AppCompatActivity() {
                 R.id.settingsFragment -> {
                     bottomNavigationView.visibility = View.VISIBLE
                 }
+
                 else -> {
                     bottomNavigationView.visibility = View.GONE
                 }

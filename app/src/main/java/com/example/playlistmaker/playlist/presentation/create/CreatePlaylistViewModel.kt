@@ -9,15 +9,15 @@ import com.example.playlistmaker.playlist.domain.api.PlaylistInteractor
 import com.example.playlistmaker.playlist.domain.models.Playlist
 import kotlinx.coroutines.launch
 
-class CreatePlaylistViewModel(
+open class CreatePlaylistViewModel(
     private val interactor: PlaylistInteractor
 ) : ViewModel() {
 
-    // Добавляем LiveData для события завершения
-    private val _isSaved = MutableLiveData<Boolean>()
+    // ИСПРАВЛЕНО: Теперь protected, чтобы EditPlaylistViewModel мог изменять статус
+    protected val _isSaved = MutableLiveData<Boolean>()
     val isSaved: LiveData<Boolean> get() = _isSaved
 
-    fun savePlaylist(
+    open fun savePlaylist(
         name: String,
         description: String?,
         imageUriString: String?,

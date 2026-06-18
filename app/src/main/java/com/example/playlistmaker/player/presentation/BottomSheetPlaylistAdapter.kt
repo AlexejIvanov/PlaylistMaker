@@ -29,7 +29,6 @@ class BottomSheetPlaylistAdapter(
     }
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
-        // Передаем функцию клика прямо в bind
         holder.bind(playlists[position], onPlaylistClicked)
     }
 
@@ -42,10 +41,8 @@ class BottomSheetPlaylistAdapter(
 
         fun bind(playlist: Playlist, onPlaylistClicked: (Playlist) -> Unit) {
             name.text = playlist.name
-
-            // Получаем правильное склонение слова "трек"
             count.text = itemView.resources.getQuantityString(
-                R.plurals.track_count, playlist.trackCount, playlist.trackCount
+                R.plurals.tracks_plural, playlist.trackCount, playlist.trackCount
             )
 
             val file = playlist.coverFilePath?.let { File(it) }

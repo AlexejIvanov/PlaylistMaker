@@ -23,24 +23,25 @@ import com.example.playlistmaker.databinding.FragmentCreatePlaylistBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class CreatePlaylistFragment : Fragment() {
+open class CreatePlaylistFragment : Fragment() {
 
-    private var _binding: FragmentCreatePlaylistBinding? = null
-    private val binding get() = _binding!!
+    protected var _binding: FragmentCreatePlaylistBinding? = null
+    protected val binding get() = _binding!!
 
-    private val viewModel: CreatePlaylistViewModel by viewModel()
+    open val viewModel: CreatePlaylistViewModel by viewModel()
     private var coverUri: Uri? = null
 
     private var trackToAdd: Track? = null
 
     // Регистрация ActivityResult для Photo Picker
-    private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        if (uri != null) {
-            coverUri = uri
-            binding.playlistCover.setImageURI(uri)
-            binding.playlistCover.scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
+    private val pickMedia =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                coverUri = uri
+                binding.playlistCover.setImageURI(uri)
+                binding.playlistCover.scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
+            }
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +73,7 @@ class CreatePlaylistFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.createButton.isEnabled = !s.isNullOrBlank()
             }
+
             override fun afterTextChanged(s: Editable?) {}
         })
 
@@ -79,16 +81,22 @@ class CreatePlaylistFragment : Fragment() {
             checkUnsavedDataAndNavigate()
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                checkUnsavedDataAndNavigate()
-            }
-        })
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    checkUnsavedDataAndNavigate()
+                }
+            })
 
         viewModel.isSaved.observe(viewLifecycleOwner) { isSaved ->
             if (isSaved) {
                 val name = binding.nameEditText.text.toString().trim()
-                Toast.makeText(requireContext(), getString(R.string.playlist_created, name), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.playlist_created, name),
+                    Toast.LENGTH_SHORT
+                ).show()
                 findNavController().navigateUp()
             }
         }

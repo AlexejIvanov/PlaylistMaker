@@ -1,14 +1,15 @@
 package com.example.playlistmaker.search.domain.impl
 
+import com.example.playlistmaker.core.models.Track
 import com.example.playlistmaker.search.domain.api.SearchHistoryInteractor
 import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
-import com.example.playlistmaker.core.models.Track
 
 /**
  * Реализация интерактора для управления историей поиска.
  * Вызывает соответствующие методы репозитория для работы с данными.
  */
-class SearchHistoryInteractorImpl(private val repository: SearchHistoryRepository): SearchHistoryInteractor {
+class SearchHistoryInteractorImpl(private val repository: SearchHistoryRepository) :
+    SearchHistoryInteractor {
 
     // Получение списка ранее просмотренных треков
     override fun getHistory(): List<Track> = repository.read()

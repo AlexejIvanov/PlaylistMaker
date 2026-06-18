@@ -8,7 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ProgressBar
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -151,6 +155,7 @@ class SearchFragment : Fragment() {
                 clearButton.isVisible = !s.isNullOrEmpty()
                 viewModel.searchDebounce(s?.toString() ?: "")
             }
+
             override fun afterTextChanged(s: Editable?) {}
         }
         searchEditText.addTextChangedListener(textWatcher)
@@ -170,11 +175,13 @@ class SearchFragment : Fragment() {
                 trackList.addAll(state.tracks)
                 trackAdapter.notifyDataSetChanged()
             }
+
             is SearchScreenState.History -> {
                 historyList.clear()
                 historyList.addAll(state.tracks)
                 historyAdapter.notifyDataSetChanged()
             }
+
             else -> {}
         }
     }
@@ -189,7 +196,8 @@ class SearchFragment : Fragment() {
     }
 
     private fun hideKeyboard() {
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         imm?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
     }
 

@@ -18,7 +18,7 @@ val settingsModule = module {
     }
 
     viewModel {
-        SettingsViewModel (
+        SettingsViewModel(
             settingsInteractor = get()
         )
     }

@@ -8,10 +8,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
-import androidx.viewpager2.widget.ViewPager2
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentMediaBinding
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 /**
@@ -43,7 +41,8 @@ class MediaFragment : Fragment() {
 
     private fun setupViewPager() {
         // Адаптер
-        binding.viewPager.adapter = MediaViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
+        binding.viewPager.adapter =
+            MediaViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
 
         // Медиатор
         tabMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
