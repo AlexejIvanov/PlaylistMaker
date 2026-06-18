@@ -25,7 +25,7 @@ class TracksRepositoryImpl(
 
         when (response.resultCode) {
             -1 -> { // Нет подключения к сети
-                emit(Resource.Error( "Проверьте подключение к интернету"))
+                emit(Resource.Error("Проверьте подключение к интернету"))
             }
 
             200 -> { // Успешный ответ от сервера
@@ -47,6 +47,7 @@ class TracksRepositoryImpl(
                 }
                 emit(Resource.Success(data))
             }
+
             else -> {
                 emit(Resource.Error("Ошибка сервера"))
             }

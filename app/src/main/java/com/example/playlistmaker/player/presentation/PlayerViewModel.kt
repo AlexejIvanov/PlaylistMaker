@@ -130,11 +130,13 @@ class PlayerViewModel(
         val trackIdLong = track.trackId
 
         if (playlist.trackIds.contains(trackIdLong)) {
-            _toastMessage.value = "Трек уже добавлен в плейлист ${playlist.name}" // Исправлено на .value
+            _toastMessage.value =
+                "Трек уже добавлен в плейлист ${playlist.name}" // Исправлено на .value
         } else {
             viewModelScope.launch {
                 playlistInteractor.addTrackToPlaylist(track, playlist)
-                _toastMessage.value = "Добавлено в плейлист ${playlist.name}" // Исправлено на .value
+                _toastMessage.value =
+                    "Добавлено в плейлист ${playlist.name}" // Исправлено на .value
             }
         }
     }

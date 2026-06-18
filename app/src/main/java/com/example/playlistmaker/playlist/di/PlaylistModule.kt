@@ -5,6 +5,8 @@ import com.example.playlistmaker.playlist.domain.api.PlaylistInteractor
 import com.example.playlistmaker.playlist.domain.api.PlaylistRepository
 import com.example.playlistmaker.playlist.domain.impl.PlaylistInteractorImpl
 import com.example.playlistmaker.playlist.presentation.create.CreatePlaylistViewModel
+import com.example.playlistmaker.playlist.presentation.create.EditPlaylistViewModel
+import com.example.playlistmaker.playlist.presentation.details.PlaylistViewModel
 import com.google.gson.Gson
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -23,5 +25,13 @@ val playlistModule = module {
 
     viewModel {
         CreatePlaylistViewModel(get())
+    }
+
+    viewModel { (playlistId: Int) ->
+        PlaylistViewModel(playlistId = playlistId, interactor = get())
+    }
+
+    viewModel {
+        EditPlaylistViewModel(get())
     }
 }

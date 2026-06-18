@@ -81,7 +81,8 @@ class PlayerFragment : Fragment() {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> _binding?.overlay?.visibility = View.GONE
@@ -142,7 +143,10 @@ class PlayerFragment : Fragment() {
                 putParcelable("track", currentTrack)
             }
             // Передаем bundle при навигации
-            findNavController().navigate(R.id.action_playerFragment_to_createPlaylistFragment, bundle)
+            findNavController().navigate(
+                R.id.action_playerFragment_to_createPlaylistFragment,
+                bundle
+            )
         }
     }
 
@@ -166,11 +170,13 @@ class PlayerFragment : Fragment() {
                 binding.playButton.isVisible = true
                 binding.pauseButton.isVisible = false
             }
+
             PlayerState.Prepared, PlayerState.Paused -> {
                 binding.playButton.isEnabled = true
                 binding.playButton.isVisible = true
                 binding.pauseButton.isVisible = false
             }
+
             PlayerState.Playing -> {
                 binding.playButton.isVisible = false
                 binding.pauseButton.isVisible = true
@@ -189,7 +195,8 @@ class PlayerFragment : Fragment() {
     private fun bindTrackData(track: Track) {
         binding.trackName.text = track.trackName
         binding.artistName.text = track.artistName
-        binding.trackLengthData.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
+        binding.trackLengthData.text =
+            SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
 
         if (track.collectionName.isNullOrEmpty()) {
             binding.collectionGroup.isVisible = false

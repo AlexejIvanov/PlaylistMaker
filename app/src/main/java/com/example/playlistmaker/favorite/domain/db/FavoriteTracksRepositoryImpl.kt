@@ -12,7 +12,7 @@ class FavoriteTracksRepositoryImpl
     private val appDatabase: AppDatabase,
     private val trackDbConvertor: TrackDbConvertor,
 
-): FavoriteTrackRepository {
+    ) : FavoriteTrackRepository {
     override suspend fun addTrackToFavorites(track: Track) {
         val trackEntity = trackDbConvertor.map(track)
         appDatabase.favoriteTracksDao().insertTrack(trackEntity)
@@ -31,7 +31,7 @@ class FavoriteTracksRepositoryImpl
     }
 
     private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<Track> {
-        return tracks.map {  trackEntity -> trackDbConvertor.map(trackEntity) }
+        return tracks.map { trackEntity -> trackDbConvertor.map(trackEntity) }
     }
 
 

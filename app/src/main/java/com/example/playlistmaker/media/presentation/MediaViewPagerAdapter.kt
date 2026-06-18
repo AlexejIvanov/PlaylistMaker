@@ -8,7 +8,7 @@ import com.example.playlistmaker.media.presentation.favorites.FavoriteTrackFragm
 import com.example.playlistmaker.media.presentation.playlists.PlaylistsFragment
 
 class MediaViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
-    FragmentStateAdapter(fragmentManager, lifecycle){
+    FragmentStateAdapter(fragmentManager, lifecycle) {
     override fun getItemCount(): Int = 2
 
     override fun createFragment(position: Int): Fragment {

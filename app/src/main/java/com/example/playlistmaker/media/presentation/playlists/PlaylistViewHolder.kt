@@ -18,7 +18,7 @@ class PlaylistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(playlist: Playlist) {
         nameText.text = playlist.name
         trackCountText.text = itemView.resources.getQuantityString(
-            R.plurals.track_count,
+            R.plurals.tracks_plural,
             playlist.trackCount,
             playlist.trackCount
         )

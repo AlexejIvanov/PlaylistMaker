@@ -25,7 +25,8 @@ class PlayerInteractorImpl(private val repository: PlayerRepository) : PlayerInt
 
     override fun releasePlayer() = repository.release() // Освобождение ресурсов (при закрытии)
 
-    override fun getCurrentPosition(): Int = repository.getCurrentPosition() // Текущее время трека (мс)
+    override fun getCurrentPosition(): Int =
+        repository.getCurrentPosition() // Текущее время трека (мс)
 
     override fun isPlaying(): Boolean = repository.isPlaying() // Проверка: играет ли музыка сейчас
 

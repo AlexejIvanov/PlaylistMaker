@@ -21,4 +21,29 @@ class PlaylistInteractorImpl(
     override suspend fun addTrackToPlaylist(track: Track, playlist: Playlist) {
         repository.addTrackToPlaylist(track, playlist)
     }
+
+    override fun getPlaylistById(id: Int): Flow<Playlist> {
+        return repository.getPlaylistById(id)
+    }
+
+    override fun getTracksFromPlaylist(trackIds: List<Long>): Flow<List<Track>> {
+        return repository.getTracksFromPlaylist(trackIds)
+    }
+
+    override suspend fun deleteTrackFromPlaylist(trackId: Long, playlistId: Int) {
+        repository.deleteTrackFromPlaylist(trackId, playlistId)
+    }
+
+    override suspend fun deletePlaylist(id: Int) {
+        repository.deletePlaylist(id)
+    }
+
+    override suspend fun updatePlaylistDetails(
+        id: Int,
+        name: String,
+        description: String?,
+        imageUriString: String?
+    ) {
+        repository.updatePlaylistDetails(id, name, description, imageUriString)
+    }
 }

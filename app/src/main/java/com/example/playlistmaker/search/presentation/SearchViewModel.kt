@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.core.models.Track
 import com.example.playlistmaker.favorite.domain.db.FavoriteTrackInteractor
 import com.example.playlistmaker.search.domain.api.SearchHistoryInteractor
 import com.example.playlistmaker.search.domain.api.TracksInteractor
-import com.example.playlistmaker.core.models.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -94,8 +94,9 @@ class SearchViewModel(
     fun showHistory() {
         viewModelScope.launch {
             val history = searchHistoryInteractor.getHistory()
-            val favoriteIds = favoriteTrackInteractor.getFavoriteTracks().first().map { it.trackId }.toSet()
-            
+            val favoriteIds =
+                favoriteTrackInteractor.getFavoriteTracks().first().map { it.trackId }.toSet()
+
             history.forEach { it.isFavorite = favoriteIds.contains(it.trackId) }
 
             _state.value = if (history.isNotEmpty()) {
@@ -120,8 +121,9 @@ class SearchViewModel(
         val currentState = _state.value
         if (currentState is SearchScreenState.Content || currentState is SearchScreenState.History) {
             viewModelScope.launch {
-                val favoriteIds = favoriteTrackInteractor.getFavoriteTracks().first().map { it.trackId }.toSet()
-                
+                val favoriteIds =
+                    favoriteTrackInteractor.getFavoriteTracks().first().map { it.trackId }.toSet()
+
                 val tracksToUpdate = when (currentState) {
                     is SearchScreenState.Content -> currentState.tracks
                     is SearchScreenState.History -> currentState.tracks

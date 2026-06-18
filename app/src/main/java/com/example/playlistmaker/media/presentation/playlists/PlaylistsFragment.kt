@@ -11,12 +11,13 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager // <-- ИМПОРТ
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
+import com.example.playlistmaker.playlist.presentation.details.PlaylistFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PlaylistsFragment: Fragment() {
+class PlaylistsFragment : Fragment() {
 
     private val viewModel: PlaylistsViewModel by viewModel()
     private val adapter = PlaylistAdapter()
@@ -38,11 +39,22 @@ class PlaylistsFragment: Fragment() {
         val newPlaylistBtn = view.findViewById<Button>(R.id.new_playlist_button)
         recyclerView = view.findViewById(R.id.recyclerView)
         placeholderContainer = view.findViewById(R.id.placeholder_container)
+
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         recyclerView.adapter = adapter
 
+        adapter.clickListener = { playlist ->
+            val bundle = PlaylistFragment.createArgs(playlist.id.toInt())
+            requireParentFragment().findNavController().navigate(
+                R.id.action_mediaLibraryFragment_to_playlistFragment,
+                bundle
+            )
+        }
+        // -----------------------------------------------
+
         newPlaylistBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_mediaLibraryFragment_to_createPlaylistFragment)
+            requireParentFragment().findNavController()
+                .navigate(R.id.action_mediaLibraryFragment_to_createPlaylistFragment)
         }
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
@@ -51,6 +63,7 @@ class PlaylistsFragment: Fragment() {
                     recyclerView.visibility = View.GONE
                     placeholderContainer.visibility = View.VISIBLE
                 }
+
                 is PlaylistsState.Content -> {
                     adapter.playlists = state.playlists
                     recyclerView.visibility = View.VISIBLE
@@ -63,13 +76,14 @@ class PlaylistsFragment: Fragment() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(
                 top = systemBars.top,
-                bottom = systemBars.bottom, // Если фрагмент под навигацией, bottom можно не трогать или корректировать
+                bottom = systemBars.bottom,
                 left = systemBars.left,
                 right = systemBars.right
             )
             insets
         }
     }
+
     override fun onResume() {
         super.onResume()
         viewModel.loadPlaylists()

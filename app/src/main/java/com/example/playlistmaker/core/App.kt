@@ -27,7 +27,16 @@ class App : Application() {
         // Инициализация Koin: передаем контекст приложения и регистрируем слои архитектуры
         startKoin {
             androidContext(this@App)
-            modules(coreModule, searchModule, playerModule, settingsModule, mediaModule, dataModule, favoriteModule,playlistModule)
+            modules(
+                coreModule,
+                searchModule,
+                playerModule,
+                settingsModule,
+                mediaModule,
+                dataModule,
+                favoriteModule,
+                playlistModule
+            )
         }
 
         // Инжектим интерактор настроек, чтобы узнать, какую тему применить при запуске

@@ -14,13 +14,20 @@ class PlaylistAdapter : RecyclerView.Adapter<PlaylistViewHolder>() {
             notifyDataSetChanged()
         }
 
+    var clickListener: ((Playlist) -> Unit)? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_playlist, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_playlist, parent, false)
         return PlaylistViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
-        holder.bind(playlists[position])
+        val playlist = playlists[position]
+        holder.bind(playlist)
+        holder.itemView.setOnClickListener {
+            clickListener?.invoke(playlist)
+        }
     }
 
     override fun getItemCount() = playlists.size

@@ -17,7 +17,7 @@ val playerModule = module {
         PlayerRepositoryImpl(mediaPlayer = get())
     }
 
-    factory <PlayerInteractor> {
+    factory<PlayerInteractor> {
         PlayerInteractorImpl(repository = get())
     }
 

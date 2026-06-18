@@ -35,16 +35,18 @@ class RetrofitNetworkClient(
                 response.apply { resultCode = 200 }
             } catch (e: Exception) {
                 Response().apply { resultCode = 500 }
-                }
             }
         }
+    }
 
     /**
      * Проверяет наличие доступа к интернету (Wi-Fi, сотовая связь или Ethernet).
      */
     private fun isConnected(): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val capabilities =
+            connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
 
         if (capabilities != null) {
             when {
